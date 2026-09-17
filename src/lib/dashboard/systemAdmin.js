@@ -1,0 +1,128 @@
+// Mock data for the System Admin view — platform-wide registry, people &
+// roles, audit log and verified-claims export. Cross-cutting: not scoped to
+// any one block or zone. Sourced from frames.html's A1-A5 mockups.
+// Illustrative only; no real figures.
+
+export const ADMIN = {
+  asOf: '16 Sep 2026',
+  zoneCount: 3,
+  blockCount: 19,
+  workerCount: 2940,
+  kpis: {
+    recordsToday: 4182,
+    recordsTrend: [3210, 3480, 3705, 3960, 3850, 4020, 4182],
+    recordsTrendLabels: ['10 Sep', '11 Sep', '12 Sep', '13 Sep', '14 Sep', '15 Sep', '16 Sep'],
+    syncBacklog: 217,
+    syncBacklogTrend: [340, 310, 265, 240, 230, 224, 217],
+    devicesOffline24h: 2,
+    anomaliesOpen: 9,
+    anomaliesTrend: [14, 13, 15, 11, 10, 9, 9],
+    anomaliesAboveCeiling: 3,
+    chainIntegrityPct: 100,
+  },
+  integrations: [
+    { id: 'ussd', name: "Africa's Talking · USSD + SMS", detail: '14,208 sessions today · 3,981 SMS sent', status: 'Healthy' },
+    { id: 'mpesa', name: 'Safaricom Daraja · M-Pesa B2C', detail: '1,180 disbursements · KES 5.8M · last run 08:02', status: 'Healthy' },
+    { id: 'sentinel', name: 'Sentinel-2 ingest', detail: 'Last pass 14 Sep · next 19 Sep · 4.1% cloud', status: 'Healthy' },
+    { id: 'forestos', name: 'ForestOS ledger push', detail: 'Batch · passport · EUDR endpoints', status: 'Degraded' },
+  ],
+  needsAttention: [
+    { title: '2 supervisor devices offline > 24 h', detail: 'TIN · SUR — 217 records held locally. Not lost, but not yet provable.', tone: 'warn' },
+    { title: '3 plots over agronomic ceiling', detail: 'NES-10 (4 d), NES-02, TIN-04 — routed to zone managers.', tone: 'warn' },
+    { title: '11 workers pending onboarding', detail: 'Awaiting ID verification before they can be mustered.', tone: 'default' },
+  ],
+  registry: {
+    hierarchy: [
+      { label: '🌲 Mau Forest Complex', depth: 0 },
+      { label: '└ South West Mau · SW-MAU', depth: 1, accent: true },
+      { label: '├ Kiptunga · KIP', depth: 2, meta: '4 plots · 10.0 ha' },
+      { label: '├ Nessuit · NES', depth: 2, meta: '4 plots · 8.2 ha ⚠', metaTone: 'warn' },
+      { label: '├ Marioshoni · MAR', depth: 2, meta: '3 plots · 8.7 ha' },
+      { label: '└ Tinet · TIN', depth: 2, meta: '3 plots · 9.1 ha' },
+      { label: '├ Eastern Mau · E-MAU', depth: 1 },
+      { label: '└ Transmara · TMR', depth: 1 },
+      { label: '🌲 Aberdares', depth: 0, meta: 'not yet onboarded', faint: true },
+      { label: '🌲 Mt Kenya', depth: 0, meta: 'not yet onboarded', faint: true },
+    ],
+    plotsInKiptunga: [
+      { id: 'KIP-01', ha: 1.2, centroid: '−0.4685, 35.6301', canopy2020: 58, canopyNow: 62, eudr: 'Clear' },
+      { id: 'KIP-04', ha: 2.4, centroid: '−0.4701, 35.6344', canopy2020: 65, canopyNow: 66, eudr: 'Clear' },
+      { id: 'KIP-09', ha: 3.6, centroid: '−0.4712, 35.6389', canopy2020: 68, canopyNow: 71, eudr: 'Clear' },
+      { id: 'KIP-12', ha: 2.8, centroid: '−0.4736, 35.6412', canopy2020: 61, canopyNow: 69, eudr: 'Clear' },
+    ],
+  },
+  people: {
+    counts: { workers: 2940, supervisors: 19, zoneManagers: 3, admins: 2 },
+    onboardingQueue: [
+      { name: 'Esther Jeptoo', detail: 'KIP · phone verified · ID pending', tag: 'ID check', tagTone: 'warn' },
+      { name: 'Joseph Kirui', detail: 'KIP · phone + ID verified', tag: 'Approve', tagTone: 'positive' },
+      { name: 'Ruth Chepkoech', detail: 'NES · shared handset flagged', tag: 'Review', tagTone: 'critical' },
+    ],
+    permissions: [
+      { capability: 'Record own work', worker: true, supervisor: false, zone: false, admin: false },
+      { capability: 'Dispute a ticket', worker: true, supervisor: false, zone: false, admin: false },
+      { capability: "Record others' work", worker: false, supervisor: true, zone: false, admin: false },
+      { capability: 'Verify claims', worker: false, supervisor: true, zone: true, admin: false },
+      { capability: 'Approve payroll', worker: false, supervisor: true, zone: true, admin: false },
+      { capability: 'Move money', worker: false, supervisor: false, zone: false, admin: false, note: true },
+      { capability: 'Sign off a period', worker: false, supervisor: false, zone: true, admin: false },
+      { capability: 'Edit plot geometry', worker: false, supervisor: false, zone: false, admin: true },
+      { capability: 'Export verified claims', worker: false, supervisor: false, zone: false, admin: true },
+    ],
+  },
+  auditLog: [
+    { ref: 'AL-4412', when: '16 Sep 17:05', who: 'SUP-KIP-02', event: 'Day lot sealed · variance −2 kg', record: 'LOT-KIP-20260916', hash: '9f2c…a41e' },
+    { ref: 'AL-4411', when: '16 Sep 11:20', who: 'SUP-KIP-02', event: 'Work ticket recorded · 24 kg', record: 'WT-2026-004182', hash: '7b18…c093' },
+    { ref: 'AL-4410', when: '16 Sep 11:14', who: 'SYSTEM', event: 'Anomaly · above plot ceiling', record: 'WT-2026-004179', hash: '2e44…81ba', tone: 'warn' },
+    { ref: 'AL-4409', when: '16 Sep 09:14', who: 'SUP-KIP-02', event: 'Survival check · 43 of 50 alive', record: 'SVC-2026-00731', hash: 'c501…33f7' },
+    { ref: 'AL-4408', when: '16 Sep 06:58', who: 'SUP-KIP-02', event: 'Incident escalated to KFS · fire', record: 'PR-0231', hash: 'a907…12d4', tone: 'critical' },
+    { ref: 'AL-4407', when: '15 Sep 14:22', who: 'RVT-0887', event: 'Ticket disputed by worker', record: 'WT-2026-003871', hash: '4d2f…77ae', tone: 'critical' },
+    { ref: 'AL-4406', when: '15 Sep 09:41', who: 'ADM-01', event: 'Plot geometry updated · survey ref SR-2026-118', record: 'NES-10', hash: '88b1…6e20' },
+    { ref: 'AL-4405', when: '14 Sep 03:10', who: 'SYSTEM', event: 'Sentinel-2 pass ingested · 12 tiles', record: 'SW-MAU', hash: 'f3a6…0dc8' },
+  ],
+  exports: [
+    {
+      id: 'eudr',
+      eyebrow: 'Exporter · per consignment',
+      title: 'EUDR pack',
+      desc: 'Plot geometry, deforestation-free evidence against the Dec 2020 baseline, chain of custody from ticket to consignment.',
+      items: [
+        { ok: true, label: '18 plot polygons' },
+        { ok: true, label: 'Sentinel-2 series since baseline' },
+        { ok: true, label: '2,412 tickets → 30 lots' },
+        { ok: true, label: 'Zone sign-off SGN-SWMAU-2026-09' },
+        { ok: false, label: 'NES-10 excluded · under investigation' },
+      ],
+      cta: 'Generate',
+    },
+    {
+      id: 'esg',
+      eyebrow: 'Listed company · annual',
+      title: 'ESG evidence pack',
+      desc: 'What an external auditor needs to sign off a sustainability claim — the underlying records, not the headline number.',
+      items: [
+        { ok: true, label: '268 trees, survival-adjusted' },
+        { ok: true, label: '6,240 verified hectare-years' },
+        { ok: true, label: '28,400 payment records, anonymised' },
+        { ok: true, label: 'Full audit trail · hash-chained' },
+        { ok: true, label: 'Named attestations per period' },
+      ],
+      cta: 'Generate',
+    },
+    {
+      id: 'qr',
+      eyebrow: 'Brand · per batch',
+      title: 'QR passport release',
+      desc: 'Releases a batch to the consumer experience in ForestOS — the five-second proof on the back of the pack.',
+      items: [
+        { ok: true, label: 'TL-2026-00482 · 1,845 kg · BP1' },
+        { ok: true, label: 'Traced to KIP-09 · 3.6 ha' },
+        { ok: true, label: '87 workers paid · names redacted' },
+        { ok: true, label: 'Conservation premium KES 18.40/kg' },
+        { ok: true, label: 'CP-2026-0007 issued' },
+      ],
+      cta: 'Release to ForestOS',
+      accent: 'gold',
+    },
+  ],
+}
