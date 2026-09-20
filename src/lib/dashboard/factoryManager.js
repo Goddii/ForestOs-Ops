@@ -90,6 +90,42 @@ export const FACTORY = {
       status: 'Cleared, pending release',
     },
   ],
+  // Grid/diesel/fuelwood/solar behind the factory's energy cost — the same
+  // energy-mix concept SolGrid Tea Energy Intelligence tracks for NTZDC
+  // factories, folded into this console's own illustrative-mock-data style
+  // (no backend here, so no live weather/telemetry — just static figures
+  // presented the way every other Factory Manager screen presents them).
+  energy: {
+    mix: {
+      gridKwh: 68400,
+      dieselLitres: 3200,
+      fuelwoodM3: 410,
+      solarGenerationKwh: 5200,
+    },
+    mixShare: [
+      { source: 'Grid electricity', pct: 71 },
+      { source: 'Fuelwood', pct: 19 },
+      { source: 'Diesel', pct: 7 },
+      { source: 'Solar (self-consumed)', pct: 3 },
+    ],
+    costPerKgTrendKes: [26.1, 25.8, 25.2, 24.9, 25.6, 24.8, 23.9, 24.1],
+    solar: {
+      installCapacityKw: 150,
+      generationTodayKwh: 620,
+      generationTrailingKwh: [4100, 4300, 5000, 5400, 5700, 5900, 5600, 5200],
+      selfConsumptionPct: 8.3,
+      expectedVsActualPct: 96,
+      insight:
+        'August generation tracked 96% of what recorded irradiance for the month predicts — within normal range, not a sign of panel or inverter trouble.',
+      battery: {
+        socPct: 61.5,
+        sohPct: 93.9,
+        panelStatus: 'Normal',
+        batteryStatus: 'Normal',
+        lastReadingAgo: '20 days ago',
+      },
+    },
+  },
   dispatch: {
     warehouseStockKg: 18400,
     stockByGrade: [

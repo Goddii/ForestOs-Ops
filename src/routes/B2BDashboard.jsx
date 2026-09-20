@@ -28,6 +28,7 @@ import ZoneSignOffModule from '../components/dashboard/modules/zone/ZoneSignOffM
 import FactoryOverviewModule from '../components/dashboard/modules/factory/FactoryOverviewModule'
 import IntakeWeighbridgeModule from '../components/dashboard/modules/factory/IntakeWeighbridgeModule'
 import ProcessingGradingModule from '../components/dashboard/modules/factory/ProcessingGradingModule'
+import PowerEnergyModule from '../components/dashboard/modules/factory/PowerEnergyModule'
 import QualityHoldsModule from '../components/dashboard/modules/factory/QualityHoldsModule'
 import DispatchStockModule from '../components/dashboard/modules/factory/DispatchStockModule'
 // System Admin modules
@@ -103,6 +104,7 @@ export default function B2BDashboard() {
           <Route path="factory" element={<FactoryOverviewModule />} />
           <Route path="factory/intake" element={<IntakeWeighbridgeModule />} />
           <Route path="factory/processing" element={<ProcessingGradingModule />} />
+          <Route path="factory/energy" element={<PowerEnergyModule />} />
           <Route path="factory/quality" element={<QualityHoldsModule />} />
           <Route path="factory/dispatch" element={<DispatchStockModule />} />
 

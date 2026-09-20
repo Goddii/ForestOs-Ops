@@ -265,7 +265,13 @@ export function Sparkline({ values, width = 240, height = 56, tone = '#059669', 
     (v, i) => `${(i * step).toFixed(1)},${(height - ((v - min) / span) * (height - 8) - 4).toFixed(1)}`,
   )
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="h-14 w-full" role="img" aria-label="Trend">
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      className="h-14 w-full"
+      role="img"
+      aria-label="Trend"
+      preserveAspectRatio="none"
+    >
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={fill} />

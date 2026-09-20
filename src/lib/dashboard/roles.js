@@ -77,6 +77,7 @@ export const ROLES = [
       { to: '', label: 'Factory Overview', end: true },
       { to: 'intake', label: 'Intake & Weighbridge' },
       { to: 'processing', label: 'Processing & Grading' },
+      { to: 'energy', label: 'Power & Energy' },
       { to: 'quality', label: 'Quality Holds' },
       { to: 'dispatch', label: 'Dispatch & Stock' },
     ],
