@@ -1,11 +1,17 @@
+import { Link } from 'react-router-dom'
 import { AlertCard, BarMeter, ModuleHeader, Panel, Sparkline, StatTile, StatusPill } from '../../DashboardKit'
 import { FACTORY } from '../../../../lib/dashboard/factoryManager'
 
 const MONTHS = ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
 
+const STATUS_TONE = { Normal: 'positive', Underperforming: 'warn', Degraded: 'warn', Fault: 'critical' }
+
+const COMPARISON_LABEL = { weather_adjusted: 'Vs. weather-expected', trailing_average: 'Vs. trailing average' }
+
 export default function PowerEnergyModule() {
   const { energy, kpis, month } = FACTORY
   const { solar } = energy
+  const comparisonUnderperforming = solar.comparison.pct < 80
 
   return (
     <div className="space-y-5">
@@ -46,6 +52,12 @@ export default function PowerEnergyModule() {
             />
           ))}
         </div>
+        <Link
+          to="ledger"
+          className="mt-4 inline-block font-mono text-[11px] uppercase tracking-[0.12em] text-emerald-700 hover:text-emerald-800"
+        >
+          See every metered reading behind these figures →
+        </Link>
       </Panel>
 
       <Panel title="Energy cost trend" lede="KES per kg made tea, monthly mean.">
@@ -73,17 +85,17 @@ export default function PowerEnergyModule() {
               display={`${solar.selfConsumptionPct}%`}
             />
             <BarMeter
-              label="Vs. weather-expected"
-              value={solar.expectedVsActualPct}
+              label={COMPARISON_LABEL[solar.comparison.method]}
+              value={solar.comparison.pct}
               max={100}
-              display={`${solar.expectedVsActualPct}%`}
-              tone={solar.expectedVsActualPct < 80 ? 'amber' : 'emerald'}
+              display={`${solar.comparison.pct}%`}
+              tone={comparisonUnderperforming ? 'amber' : 'emerald'}
             />
           </div>
           <AlertCard
             className="mt-3"
-            tone="positive"
-            title="Solar output is within normal range"
+            tone={comparisonUnderperforming ? 'warn' : 'positive'}
+            title={comparisonUnderperforming ? 'Solar output is underperforming' : 'Solar output is within normal range'}
             detail={solar.insight}
           />
         </Panel>
@@ -101,10 +113,10 @@ export default function PowerEnergyModule() {
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink-muted">
             <span className="flex items-center gap-1.5">
-              Panel status <StatusPill status={solar.battery.panelStatus} tone="positive" />
+              Panel status <StatusPill status={solar.battery.panelStatus} tone={STATUS_TONE[solar.battery.panelStatus]} />
             </span>
             <span className="flex items-center gap-1.5">
-              Battery status <StatusPill status={solar.battery.batteryStatus} tone="positive" />
+              Battery status <StatusPill status={solar.battery.batteryStatus} tone={STATUS_TONE[solar.battery.batteryStatus]} />
             </span>
           </div>
           <p className="mt-3 text-[11px] text-ink-faint">Last reading {solar.battery.lastReadingAgo}.</p>

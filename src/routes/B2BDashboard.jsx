@@ -29,6 +29,7 @@ import FactoryOverviewModule from '../components/dashboard/modules/factory/Facto
 import IntakeWeighbridgeModule from '../components/dashboard/modules/factory/IntakeWeighbridgeModule'
 import ProcessingGradingModule from '../components/dashboard/modules/factory/ProcessingGradingModule'
 import PowerEnergyModule from '../components/dashboard/modules/factory/PowerEnergyModule'
+import EnergyLedgerModule from '../components/dashboard/modules/factory/EnergyLedgerModule'
 import QualityHoldsModule from '../components/dashboard/modules/factory/QualityHoldsModule'
 import DispatchStockModule from '../components/dashboard/modules/factory/DispatchStockModule'
 // System Admin modules
@@ -105,6 +106,7 @@ export default function B2BDashboard() {
           <Route path="factory/intake" element={<IntakeWeighbridgeModule />} />
           <Route path="factory/processing" element={<ProcessingGradingModule />} />
           <Route path="factory/energy" element={<PowerEnergyModule />} />
+          <Route path="factory/ledger" element={<EnergyLedgerModule />} />
           <Route path="factory/quality" element={<QualityHoldsModule />} />
           <Route path="factory/dispatch" element={<DispatchStockModule />} />
 
