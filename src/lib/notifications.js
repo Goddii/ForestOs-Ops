@@ -6,6 +6,7 @@
 
 import { ZONE } from './dashboard/zoneManager'
 import { ADMIN } from './dashboard/systemAdmin'
+import { FACTORY } from './dashboard/factoryManager'
 
 const GENERIC = [
   {
@@ -62,6 +63,22 @@ const BY_ROLE = {
       detail: 'Awaiting ID verification before they can be mustered.',
       when: '5 hours ago',
       to: 'people',
+    },
+  ],
+  factory: [
+    {
+      id: 'factory-dryer',
+      title: 'Dryer 2 running 4°C below spec',
+      detail: `Batch ${FACTORY.qualityHolds[0].lotId} held for re-test · ${FACTORY.qualityHolds[0].kg.toLocaleString()} kg affected.`,
+      when: '22 min ago',
+      to: 'quality',
+    },
+    {
+      id: 'factory-sorting',
+      title: 'Sorting line idle since 06:40',
+      detail: 'Awaiting next drying batch.',
+      when: '1 hour ago',
+      to: 'processing',
     },
   ],
   ntzdc: [

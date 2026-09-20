@@ -24,6 +24,12 @@ import BufferMapModule from '../components/dashboard/modules/zone/BufferMapModul
 import ExceptionsModule from '../components/dashboard/modules/zone/ExceptionsModule'
 import PayParityModule from '../components/dashboard/modules/zone/PayParityModule'
 import ZoneSignOffModule from '../components/dashboard/modules/zone/ZoneSignOffModule'
+// Factory Manager modules
+import FactoryOverviewModule from '../components/dashboard/modules/factory/FactoryOverviewModule'
+import IntakeWeighbridgeModule from '../components/dashboard/modules/factory/IntakeWeighbridgeModule'
+import ProcessingGradingModule from '../components/dashboard/modules/factory/ProcessingGradingModule'
+import QualityHoldsModule from '../components/dashboard/modules/factory/QualityHoldsModule'
+import DispatchStockModule from '../components/dashboard/modules/factory/DispatchStockModule'
 // System Admin modules
 import ConsoleHomeModule from '../components/dashboard/modules/admin/ConsoleHomeModule'
 import RegistryModule from '../components/dashboard/modules/admin/RegistryModule'
@@ -36,9 +42,10 @@ const AS_OF = '2026-09-07'
 
 /**
  * The console's routed content, wrapped in the shared `AppShell` (sidebar +
- * topbar). NTZDC employees only — Block Operations, Zone Manager, National
- * Management, System Admin. Brand/Buyer/Creator/ESG accounts live on the
- * customer experience platform (`forestos-qr-landing`) instead, not here.
+ * topbar). NTZDC employees only — Block Operations, Zone Manager, Factory
+ * Manager, National Management, System Admin. Brand/Buyer/Creator/ESG
+ * accounts live on the customer experience platform (`forestos-qr-landing`)
+ * instead, not here.
  *
  * The active role for display purposes follows the URL (`roleFromPath`), not
  * a fixed session role — `/app/overview` deliberately deep-links into other
@@ -91,6 +98,13 @@ export default function B2BDashboard() {
           <Route path="zone/exceptions" element={<ExceptionsModule />} />
           <Route path="zone/pay" element={<PayParityModule />} />
           <Route path="zone/signoff" element={<ZoneSignOffModule />} />
+
+          {/* Factory Manager */}
+          <Route path="factory" element={<FactoryOverviewModule />} />
+          <Route path="factory/intake" element={<IntakeWeighbridgeModule />} />
+          <Route path="factory/processing" element={<ProcessingGradingModule />} />
+          <Route path="factory/quality" element={<QualityHoldsModule />} />
+          <Route path="factory/dispatch" element={<DispatchStockModule />} />
 
           {/* System Admin */}
           <Route path="admin" element={<ConsoleHomeModule />} />

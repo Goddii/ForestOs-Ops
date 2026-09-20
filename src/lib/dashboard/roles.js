@@ -1,9 +1,9 @@
 // Role-based views for the operations console. forestos-ops is scoped to
 // Nyayo Tea Zone Development Cooperation (NTZDC) employees only — Block
-// Operations, Zone Manager, National Management and System Admin. Brand,
-// Buyer, Creator and ESG Capital accounts were removed from here: those
-// external partners connect through the customer experience platform
-// (`forestos-qr-landing`), not this internal console.
+// Operations, Zone Manager, Factory Manager, National Management and System
+// Admin. Brand, Buyer, Creator and ESG Capital accounts were removed from
+// here: those external partners connect through the customer experience
+// platform (`forestos-qr-landing`), not this internal console.
 //
 // Access is role-based from the sign-in step (`lib/session.js`,
 // `routes/SignIn.jsx`) — there is no in-app switcher; changing role means
@@ -58,6 +58,27 @@ export const ROLES = [
       { to: 'exceptions', label: 'Exceptions' },
       { to: 'pay', label: 'Pay & Parity' },
       { to: 'signoff', label: 'Zone Sign-off' },
+    ],
+  },
+  {
+    id: 'factory',
+    label: 'Factory Manager View',
+    base: '/app/factory',
+    scopeLabel: 'Managed factory',
+    org: {
+      name: 'NTZDC — Kiptunga Tea Factory',
+      role: 'Factory Manager',
+      scope: 'Kiptunga Tea Factory · processing',
+      code: 'NTZDC-F-KPT',
+      since: '2019',
+    },
+    person: { name: 'P. Rotich', id: 'FM-KTF-01', email: 'p.rotich@ntzdc.go.ke' },
+    modules: [
+      { to: '', label: 'Factory Overview', end: true },
+      { to: 'intake', label: 'Intake & Weighbridge' },
+      { to: 'processing', label: 'Processing & Grading' },
+      { to: 'quality', label: 'Quality Holds' },
+      { to: 'dispatch', label: 'Dispatch & Stock' },
     ],
   },
   {
