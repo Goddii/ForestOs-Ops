@@ -186,7 +186,7 @@ function SidebarBody({ role, collapsed, onToggleCollapse, showCloseButton, onClo
               Signed in as
             </p>
             <p className="mt-1 text-[13px] font-medium text-white">{role.person?.name ?? org.name}</p>
-            <p className="text-[11px] text-emerald-100/70">{org.role}</p>
+            {org.role && <p className="text-[11px] text-emerald-100/70">{org.role}</p>}
           </>
         )}
         <Link

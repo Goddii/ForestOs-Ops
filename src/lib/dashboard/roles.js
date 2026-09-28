@@ -22,7 +22,6 @@ export const ROLES = [
     scopeLabel: 'Operating zone',
     org: {
       name: 'NTZDC — South West Mau',
-      role: 'Block Operations',
       scope: 'Kiptunga Block operations',
       code: 'NTZDC-SWM',
       since: '2019',
@@ -90,7 +89,6 @@ export const ROLES = [
     scopeLabel: 'Coverage',
     org: {
       name: 'NTZDC — National',
-      role: 'National Management',
       scope: 'All zones',
       code: 'NTZDC-NAT',
       since: '2016',

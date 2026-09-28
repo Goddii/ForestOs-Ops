@@ -26,7 +26,7 @@ export default function ProfileMenu({ role, open, onToggle, onClose }) {
         </span>
         <span className="hidden text-left sm:block">
           <span className="block text-[12.5px] font-medium leading-tight text-ink">{person?.name ?? org.name}</span>
-          <span className="block text-[10.5px] leading-tight text-ink-faint">{org.role}</span>
+          {org.role && <span className="block text-[10.5px] leading-tight text-ink-faint">{org.role}</span>}
         </span>
         <ChevronDown className="hidden h-3.5 w-3.5 text-ink-faint sm:block" strokeWidth={2} aria-hidden="true" />
       </button>

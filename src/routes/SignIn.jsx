@@ -18,7 +18,9 @@ function DemoAccountsDisclosure() {
           {ROLES.map((role) => (
             <div key={role.id} className="flex items-center justify-between gap-3 py-1.5">
               <div className="min-w-0">
-                <p className="truncate text-[12.5px] font-medium text-bone">{role.org.role}</p>
+                {role.org.role && (
+                  <p className="truncate text-[12.5px] font-medium text-bone">{role.org.role}</p>
+                )}
                 <p className="truncate font-mono text-[11px] text-sage-500">{role.person.email}</p>
               </div>
               <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-sage-500">
