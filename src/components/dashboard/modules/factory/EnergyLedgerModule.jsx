@@ -96,10 +96,9 @@ function RateControl({ field, value, onChange }) {
 // the dashboard can be traced back to what was actually recorded, when, and
 // how it reached the system.
 //
-// Pricing and new readings are session-only, the same pattern
-// PriceConfiguratorModule (Block Operations' farmgate rate screen) already
-// uses: plain React state with a "Publish (prototype)" confirm step, no
-// backend to write to — leaving this screen (or refreshing) forgets it.
+// Pricing and new readings are session-only: plain React state with a
+// "Publish (prototype)" confirm step, no backend to write to — leaving this
+// screen (or refreshing) forgets it.
 export default function EnergyLedgerModule() {
   const { ledger, month } = FACTORY
   const [entries, setEntries] = useState(ledger.entries)

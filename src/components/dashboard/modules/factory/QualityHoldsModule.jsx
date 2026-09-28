@@ -1,10 +1,9 @@
 import { AlertCard, ModuleHeader, Panel } from '../../DashboardKit'
 import { FACTORY } from '../../../../lib/dashboard/factoryManager'
 
-// Post-processing quality holds — distinct from Block Operations' "Quality &
-// Rejections" (which triages green-leaf claims at the collection stage):
-// this is made tea already through the line, held back from dispatch until
-// a re-test or a buyer's own QA sign-off clears it.
+// Post-processing quality holds — not green-leaf rejections at the
+// collection stage: this is made tea already through the line, held back
+// from dispatch until a re-test or a buyer's own QA sign-off clears it.
 export default function QualityHoldsModule() {
   const { qualityHolds, month } = FACTORY
   return (

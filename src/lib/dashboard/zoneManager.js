@@ -1,6 +1,5 @@
-// Mock data for the Zone Manager view — one zone, several blocks. Sits between
-// Block Operations (single block) and National Management (every zone) in the
-// org hierarchy; see DESIGN.md. Sourced from frames.html's Z1-Z5 mockups.
+// Mock data for the Zone Manager view — one zone, several blocks; see
+// DESIGN.md. Sourced from frames.html's Z1-Z5 mockups.
 // Illustrative only; no real figures.
 
 export const ZONE = {

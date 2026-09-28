@@ -1,12 +1,13 @@
 # ForestOS Ops
 
 The internal operations console for **Nyayo Tea Zone Development
-Cooperation (NTZDC) employees only** — Block Operations, Zone Manager,
-National Management, System Admin. Split out of `forestos-qr-landing`, which
-keeps the public consumer trace (the QR scan → provenance story); Brand,
-Buyer, Creator and ESG Capital accounts used to live here too, but were
-removed — those partners connect through the customer experience platform
-(`forestos-qr-landing`) instead, not this console.
+Cooperation (NTZDC) employees only** — Zone Manager, Factory Manager,
+System Admin. Split out of `forestos-qr-landing`, which keeps the public
+consumer trace (the QR scan → provenance story); Brand, Buyer, Creator and
+ESG Capital accounts used to live here too, but were removed — those partners
+connect through the customer experience platform (`forestos-qr-landing`)
+instead, not this console. Block Operations and National Management were
+removed later (see DESIGN.md).
 
 Structurally this maps onto `frames.html`'s role groups — **Zone Manager**
 and **System Admin** are built here as real desktop consoles (frames.html's
@@ -36,8 +37,8 @@ accounts land on different, correctly-scoped screens.
    documents the swap seam — each `toX` in `adapters.js` projects today's
    mock into the shape a real endpoint should return; components don't need
    to change when that lands.
-3. **Data submission**, not just display — verification claims, payroll
-   approval, price configuration, zone sign-off currently just render cards;
+3. **Data submission**, not just display — payroll approval, energy
+   pricing, zone sign-off currently just render cards;
    a real system writes those somewhere with an audit trail.
 
 ## Stack

@@ -1,9 +1,10 @@
 // Role-based views for the operations console. forestos-ops is scoped to
-// Nyayo Tea Zone Development Cooperation (NTZDC) employees only — Block
-// Operations, Zone Manager, Factory Manager, National Management and System
-// Admin. Brand, Buyer, Creator and ESG Capital accounts were removed from
-// here: those external partners connect through the customer experience
-// platform (`forestos-qr-landing`), not this internal console.
+// Nyayo Tea Zone Development Cooperation (NTZDC) employees only — Zone
+// Manager, Factory Manager and System Admin. Brand, Buyer, Creator and ESG
+// Capital accounts were removed from here: those external partners connect
+// through the customer experience platform (`forestos-qr-landing`), not this
+// internal console. Block Operations and National Management were removed
+// later; see DESIGN.md.
 //
 // Access is role-based from the sign-in step (`lib/session.js`,
 // `routes/SignIn.jsx`) — there is no in-app switcher; changing role means
@@ -15,28 +16,6 @@
 // own data file) mock data. Illustrative only.
 
 export const ROLES = [
-  {
-    id: 'ntzdc',
-    label: 'Block Operations View',
-    base: '/app/ops',
-    scopeLabel: 'Operating zone',
-    org: {
-      name: 'NTZDC — South West Mau',
-      scope: 'Kiptunga Block operations',
-      code: 'NTZDC-SWM',
-      since: '2019',
-    },
-    person: { name: 'J. Chirchir', id: 'SUP-KIP-02', email: 'j.chirchir@ntzdc.go.ke' },
-    modules: [
-      { to: '', label: 'Operations & QC Hub', end: true },
-      { to: 'verification', label: 'Verification Queue' },
-      { to: 'problems', label: 'Problem Reports' },
-      { to: 'quality', label: 'Quality & Rejections' },
-      { to: 'pricing', label: 'Price Configurator' },
-      { to: 'training', label: 'Farmer Training Alerts' },
-      { to: 'buffer', label: 'Buffer Maintenance' },
-    ],
-  },
   {
     id: 'zone',
     label: 'Zone Manager View',
@@ -80,24 +59,6 @@ export const ROLES = [
       { to: 'ledger', label: 'Energy Ledger' },
       { to: 'quality', label: 'Quality Holds' },
       { to: 'dispatch', label: 'Dispatch & Stock' },
-    ],
-  },
-  {
-    id: 'ntzdc-mgmt',
-    label: 'National Management View',
-    base: '/app/management',
-    scopeLabel: 'Coverage',
-    org: {
-      name: 'NTZDC — National',
-      scope: 'All zones',
-      code: 'NTZDC-NAT',
-      since: '2016',
-    },
-    person: { name: 'Faith Wambui', id: 'NAT-MGMT-01', email: 'faith.wambui@ntzdc.go.ke' },
-    modules: [
-      { to: '', label: 'Landscape Overview', end: true },
-      { to: 'zones', label: 'Zone Comparison' },
-      { to: 'buffer', label: 'Buffer & Conservation Rollup' },
     ],
   },
   {

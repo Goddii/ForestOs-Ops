@@ -88,31 +88,6 @@ const BY_ROLE = {
       to: 'processing',
     },
   ],
-  ntzdc: [
-    {
-      id: 'ntzdc-verify',
-      title: '6 claims to verify',
-      detail: '2 overdue past their review window.',
-      when: '40 min ago',
-      to: 'verification',
-    },
-    {
-      id: 'ntzdc-dispute',
-      title: 'Ticket disputed',
-      detail: 'WT-2026-003871 · respond by Thursday.',
-      when: '1 day ago',
-      to: 'problems',
-    },
-  ],
-  'ntzdc-mgmt': [
-    {
-      id: 'mgmt-parity',
-      title: 'Pay-parity gap widened · Cherangani Hills',
-      detail: 'Now the widest gap to the top-paying zone.',
-      when: '6 hours ago',
-      to: 'zones',
-    },
-  ],
   esg: [
     {
       id: 'esg-drawdown',

@@ -10,14 +10,13 @@
 
 import { EUDR, SATELLITE } from './dashboardData'
 import { BATCH_CHAIN, isNonAuction } from './batchChain'
-import { managementRollup } from './dashboard/ntzdcManagement'
 import { ZONE } from './dashboard/zoneManager'
 import { toBatchRecord } from './contracts/adapters'
 
 /** Every batch in the shape a real endpoint should return (`BatchRecord`). */
 export const batchRecordsContract = BATCH_CHAIN.map(toBatchRecord)
 
-// Verification pipeline shared with the NTZDC Verification Queue.
+// Verification pipeline a batch moves through before it counts as verified.
 export const VERIFICATION_STAGES = [
   'Reported',
   'Field verified',
@@ -120,7 +119,6 @@ export function plotConnectedRecord(plotId) {
  * so the overview stays consistent with the individual modules.
  */
 export function landscapeSummary() {
-  const rollup = managementRollup()
   const verifiedBatches = ALL_BATCHES.filter((b) => isVerified(b.stage))
   const pendingBatches = ALL_BATCHES.filter((b) => !isVerified(b.stage) && isNonAuction(b.channel))
 
@@ -147,13 +145,11 @@ export function landscapeSummary() {
       conservationPremiumKesPerKg: ZONE.pay.conservationPremiumPerKg,
       totalKesPerKg: ZONE.pay.totalPerKg,
       medianWeeklyPay: ZONE.pay.medianWeeklyPay,
-      seasonIntakeT: rollup.intakeSeasonT,
     },
     reward: {
-      farmers: rollup.farmers,
-      bufferHa: rollup.bufferHa,
-      trainingCoveragePct: Math.round(rollup.trainingCoveragePct ?? 0),
-      zones: rollup.zoneCount,
+      // Read off the Zone Manager's own South West Mau figures, like Value.
+      workers: ZONE.workers,
+      bufferVerifiedPct: ZONE.kpis.bufferVerifiedPct,
     },
   }
 }

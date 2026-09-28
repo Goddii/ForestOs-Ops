@@ -31,8 +31,8 @@ function buildFlow() {
         { v: `${s.verify.batchesVerified} / ${s.verify.batchesVerified + s.verify.batchesPending}`, k: 'branded batches verified vs in the pipeline' },
         { v: `+${s.verify.ndviDelta}`, k: 'NDVI recovery vs the 2020 baseline' },
       ],
-      to: '/app/ops/verification',
-      cta: 'Open the verification queue',
+      to: '/app/admin/exports',
+      cta: 'Open the verified claims export',
     },
     {
       key: 'value',
@@ -50,11 +50,11 @@ function buildFlow() {
       verb: 'Reward',
       line: 'Value routes back to farmers, buffer conservation, training and verification — every shilling has a destination.',
       figures: [
-        { v: s.reward.farmers.toLocaleString(), k: 'farmers & workers represented' },
-        { v: `${s.reward.bufferHa.toLocaleString()} ha`, k: `buffer under maintenance across ${s.reward.zones} zones` },
+        { v: s.reward.workers.toLocaleString(), k: 'farmers & workers, South West Mau' },
+        { v: `${s.reward.bufferVerifiedPct}%`, k: 'of the buffer verified, South West Mau' },
       ],
-      to: '/app/management',
-      cta: 'Open the landscape roll-up',
+      to: '/app/zone',
+      cta: 'Open the zone overview',
     },
   ]
 }

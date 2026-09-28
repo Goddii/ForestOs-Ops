@@ -8,7 +8,7 @@
 // in the SolGrid Tea Energy Intelligence build this was ported from
 // (Kipchabo and Gatitu) — a smaller, older site than Kiptunga (which stays
 // as its own named facility elsewhere in this app: `lib/batchChain.js`,
-// Block Operations, Zone Manager), with a genuinely underperforming solar
+// Zone Manager), with a genuinely underperforming solar
 // array carried over from that source, not invented fresh. Illustrative
 // only; no real figures.
 export const FACTORY = {

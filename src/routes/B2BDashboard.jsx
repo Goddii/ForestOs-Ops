@@ -5,18 +5,6 @@ import { DEFAULT_ROLE, roleFromPath } from '../lib/dashboard/roles'
 
 // Cross-cutting
 import OverviewLandscapeModule from '../components/dashboard/modules/OverviewLandscapeModule'
-// NTZDC Operations modules
-import CollectionFeedsModule from '../components/dashboard/modules/ntzdc/CollectionFeedsModule'
-import VerificationQueueModule from '../components/dashboard/modules/ntzdc/VerificationQueueModule'
-import ProblemReportsModule from '../components/dashboard/modules/ntzdc/ProblemReportsModule'
-import QualityRejectionsModule from '../components/dashboard/modules/ntzdc/QualityRejectionsModule'
-import PriceConfiguratorModule from '../components/dashboard/modules/ntzdc/PriceConfiguratorModule'
-import TrainingAlertsModule from '../components/dashboard/modules/ntzdc/TrainingAlertsModule'
-import BufferMaintenanceModule from '../components/dashboard/modules/ntzdc/BufferMaintenanceModule'
-// NTZDC Management modules
-import LandscapeOverviewModule from '../components/dashboard/modules/management/LandscapeOverviewModule'
-import ZoneComparisonModule from '../components/dashboard/modules/management/ZoneComparisonModule'
-import BufferConservationRollupModule from '../components/dashboard/modules/management/BufferConservationRollupModule'
 // Zone Manager modules
 import ZoneOverviewModule from '../components/dashboard/modules/zone/ZoneOverviewModule'
 import BlockPerformanceModule from '../components/dashboard/modules/zone/BlockPerformanceModule'
@@ -44,10 +32,9 @@ const AS_OF = '2026-09-07'
 
 /**
  * The console's routed content, wrapped in the shared `AppShell` (sidebar +
- * topbar). NTZDC employees only — Block Operations, Zone Manager, Factory
- * Manager, National Management, System Admin. Brand/Buyer/Creator/ESG
- * accounts live on the customer experience platform (`forestos-qr-landing`)
- * instead, not here.
+ * topbar). NTZDC employees only — Zone Manager, Factory Manager, System
+ * Admin. Brand/Buyer/Creator/ESG accounts live on the customer experience
+ * platform (`forestos-qr-landing`) instead, not here.
  *
  * The active role for display purposes follows the URL (`roleFromPath`), not
  * a fixed session role — `/app/overview` deliberately deep-links into other
@@ -78,20 +65,6 @@ export default function B2BDashboard() {
         <Routes>
           {/* Cross-cutting — the Forest Line front door */}
           <Route path="overview" element={<OverviewLandscapeModule />} />
-
-          {/* Block Operations */}
-          <Route path="ops" element={<CollectionFeedsModule />} />
-          <Route path="ops/verification" element={<VerificationQueueModule />} />
-          <Route path="ops/problems" element={<ProblemReportsModule />} />
-          <Route path="ops/quality" element={<QualityRejectionsModule />} />
-          <Route path="ops/pricing" element={<PriceConfiguratorModule />} />
-          <Route path="ops/training" element={<TrainingAlertsModule />} />
-          <Route path="ops/buffer" element={<BufferMaintenanceModule />} />
-
-          {/* National Management (org-wide roll-up) */}
-          <Route path="management" element={<LandscapeOverviewModule />} />
-          <Route path="management/zones" element={<ZoneComparisonModule />} />
-          <Route path="management/buffer" element={<BufferConservationRollupModule />} />
 
           {/* Zone Manager */}
           <Route path="zone" element={<ZoneOverviewModule />} />

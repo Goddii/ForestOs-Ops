@@ -531,3 +531,24 @@ restraint `.dash`'s single-shadow rule already asks for elsewhere in this
 document. Zone Manager's Overview is the one built example; extending it to
 National Management's or Admin's own overview is a straightforward repeat of
 the same component, not a new pattern, whenever that's asked for.
+
+## Block Operations and National Management removed
+
+The console now has three roles: Zone Manager, Factory Manager, System Admin.
+Block Operations (`ntzdc`, `/app/ops/*`) and National Management
+(`ntzdc-mgmt`, `/app/management/*`) were removed entirely, along with their
+modules (everything under `modules/{ntzdc,management}/`), their data files
+(`lib/dashboard/{ntzdc,ntzdcManagement}.js`), their notifications, their
+sidebar icons, and the contract adapters only they used
+(`to/fromVerificationClaim`, `to/fromProblemReport`, `to/fromZoneComparisonRow`
+in `contracts/adapters.js`; the matching typedefs in `shapes.js` stay, since
+that file mirrors the team's shared contracts doc). Old `/app/ops` and
+`/app/management` URLs fall through to the `*` redirect.
+
+`OverviewLandscapeModule` needed rewiring again: "Verify" now opens System
+Admin's Verified Claims Export instead of the Verification Queue, and
+"Reward" opens Zone Manager's Overview with figures read off `ZONE` (workers,
+buffer verified %) instead of `managementRollup()`, so the whole tour now
+reads from South West Mau data. `DEFAULT_ROLE` (`ROLES[0]`) is now Zone
+Manager. Earlier sections of this file still describe the two roles as they
+were built.
