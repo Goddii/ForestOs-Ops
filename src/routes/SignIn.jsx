@@ -6,29 +6,39 @@ import { setAccountRoleId } from '../lib/session'
 import { ADMIN } from '../lib/dashboard/systemAdmin'
 import { ZONE } from '../lib/dashboard/zoneManager'
 
-function DemoAccountsDisclosure() {
+/**
+ * Seeded demo accounts, one per role. Picking one fills the email field and
+ * moves focus to the password — it doesn't sign in on its own, so the form
+ * stays the one front door.
+ */
+function DemoAccountsDisclosure({ onPick }) {
   return (
     <details className="group rounded-xl border border-bone/15 bg-forest-900/60 [&_summary]:list-none">
       <summary className="flex cursor-pointer items-center gap-2 px-4 py-3 text-[12.5px] font-medium text-sage-300 transition-colors hover:text-bone">
         <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-sage-500" strokeWidth={2} aria-hidden="true" />
         Demo accounts, no invitation needed
       </summary>
-      <div className="border-t border-bone/10 px-4 py-3">
-        <div className="divide-y divide-bone/10">
+      <div className="border-t border-bone/10 px-2 py-2">
+        <ul className="divide-y divide-bone/10">
           {ROLES.map((role) => (
-            <div key={role.id} className="flex items-center justify-between gap-3 py-1.5">
-              <div className="min-w-0">
-                {role.org.role && (
-                  <p className="truncate text-[12.5px] font-medium text-bone">{role.org.role}</p>
-                )}
-                <p className="truncate font-mono text-[11px] text-sage-500">{role.person.email}</p>
-              </div>
-              <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-sage-500">
-                any password
-              </span>
-            </div>
+            <li key={role.id}>
+              <button
+                type="button"
+                onClick={() => onPick(role.person.email)}
+                className="flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-bone/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-400/60"
+              >
+                <span className="min-w-0">
+                  {role.org.role && (
+                    <span className="block truncate text-[12.5px] font-medium text-bone">{role.org.role}</span>
+                  )}
+                  <span className="block truncate font-mono text-[11px] text-sage-500">{role.person.email}</span>
+                </span>
+                <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] text-sage-500">Use</span>
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
+        <p className="px-2 pb-1 pt-2 text-[11px] text-sage-500">Any password works.</p>
       </div>
     </details>
   )
@@ -100,9 +110,10 @@ export default function SignIn() {
               One system, every hand that touches the record.
             </h1>
             <p className="mt-5 max-w-[46ch] text-[15px] leading-relaxed text-sage-300">
-              Block supervisors capture the work on their phones. This console is where zone managers
-              sign a period off, and where system admins keep the registry, the people and the audit
-              chain intact. NTZDC employees only.
+              Block supervisors capture the work on their phones. This console is where the
+              operations manager runs tea, conservation and partnerships across every zone, zone managers
+              sign a period off, and system admins keep the registry, the people and the audit chain intact.
+              NTZDC employees only.
             </p>
 
             <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-bone/15 pt-7 sm:grid-cols-4">
@@ -217,7 +228,13 @@ export default function SignIn() {
             </div>
 
             <div className="mt-5">
-              <DemoAccountsDisclosure />
+              <DemoAccountsDisclosure
+                onPick={(picked) => {
+                  setEmail(picked)
+                  setError('')
+                  passwordRef.current?.focus()
+                }}
+              />
             </div>
           </div>
         </main>

@@ -28,15 +28,19 @@ function batchResults(role, query) {
   }))
 }
 
+// Zone Manager and the Operations Manager's SW Mau Zone Desk share the same
+// six blocks; each opens them on its own block-level screen.
+const BLOCK_SCREEN = { zone: 'blocks', operations: 'desk/teams' }
+
 function blockResults(role, query) {
-  if (role.id !== 'zone') return []
+  if (!BLOCK_SCREEN[role.id]) return []
   return ZONE.blocks
     .filter((b) => b.name.toLowerCase().includes(query) || b.id.toLowerCase().includes(query))
     .map((b) => ({
       id: `block-${b.id}`,
       label: `${b.name} · ${b.id}`,
       meta: `${b.supervisor} · ${b.workers} workers`,
-      to: modulePath(role, 'blocks'),
+      to: modulePath(role, BLOCK_SCREEN[role.id]),
     }))
 }
 

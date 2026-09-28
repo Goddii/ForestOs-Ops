@@ -1,6 +1,7 @@
 // Role-based views for the operations console. forestos-ops is scoped to
 // Nyayo Tea Zone Development Cooperation (NTZDC) employees only — Zone
-// Manager, Factory Manager and System Admin. Brand, Buyer, Creator and ESG
+// Manager, Factory Manager, Operations Manager (national head of operations)
+// and System Admin. Brand, Buyer, Creator and ESG
 // Capital accounts were removed from here: those external partners connect
 // through the customer experience platform (`forestos-qr-landing`), not this
 // internal console. Block Operations and National Management were removed
@@ -59,6 +60,30 @@ export const ROLES = [
       { to: 'ledger', label: 'Energy Ledger' },
       { to: 'quality', label: 'Quality Holds' },
       { to: 'dispatch', label: 'Dispatch & Stock' },
+    ],
+  },
+  {
+    id: 'operations',
+    label: 'Operations Manager View',
+    base: '/app/operations',
+    scopeLabel: 'Coverage',
+    org: {
+      name: 'NTZDC — Head Office',
+      role: 'Operations Manager',
+      scope: 'All zones · tea, conservation, partnerships, people',
+      code: 'NTZDC-OPS',
+      since: '2016',
+    },
+    person: { name: 'Peter Langat', id: 'OPS-HQ-01', email: 'peter.langat@ntzdc.go.ke' },
+    modules: [
+      { to: '', label: 'Operations Overview', end: true },
+      { to: 'tea', label: 'Tea Operations' },
+      { to: 'conservation', label: 'Conservation Operations' },
+      { to: 'partnerships', label: 'Partnerships' },
+      { to: 'people', label: 'People & Payroll' },
+      { to: 'incidents', label: 'Incidents & Escalations' },
+      { to: 'approvals', label: 'Approvals & Budget' },
+      { to: 'desk', label: 'Zone Desk' },
     ],
   },
   {

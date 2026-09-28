@@ -2,7 +2,7 @@
 
 The internal operations console for **Nyayo Tea Zone Development
 Cooperation (NTZDC) employees only** — Zone Manager, Factory Manager,
-System Admin. Split out of `forestos-qr-landing`, which keeps the public
+Operations Manager (national head of operations), System Admin. Split out of `forestos-qr-landing`, which keeps the public
 consumer trace (the QR scan → provenance story); Brand, Buyer, Creator and
 ESG Capital accounts used to live here too, but were removed — those partners
 connect through the customer experience platform (`forestos-qr-landing`)

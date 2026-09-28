@@ -8,7 +8,14 @@ export default function Breadcrumbs({ role }) {
   const isOverview = pathname === '/app/overview'
   const current = isOverview
     ? 'Forest Line overview'
-    : (role.modules.find((m) => pathname === modulePath(role, m.to))?.label ?? role.modules[0]?.label)
+    : (role.modules
+        .filter((m) => {
+          const path = modulePath(role, m.to)
+          // A module with sub-screens (Operations Manager's Zone Desk) owns
+          // everything under its path, not just its exact URL.
+          return pathname === path || (m.to && pathname.startsWith(path + '/'))
+        })
+        .sort((a, b) => b.to.length - a.to.length)[0]?.label ?? role.modules[0]?.label)
 
   const crumbs = isOverview ? ['ForestOS', current] : ['ForestOS', role.label.replace(/ View$/, ''), current]
 

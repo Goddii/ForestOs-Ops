@@ -7,6 +7,7 @@
 import { ZONE } from './dashboard/zoneManager'
 import { ADMIN } from './dashboard/systemAdmin'
 import { FACTORY } from './dashboard/factoryManager'
+import { NATIONAL } from './dashboard/operationsNational'
 
 const GENERIC = [
   {
@@ -63,6 +64,41 @@ const BY_ROLE = {
       detail: 'Awaiting ID verification before they can be mustered.',
       when: '5 hours ago',
       to: 'people',
+    },
+  ],
+  // Seeded from the same records as the Operations Manager's opening
+  // national queue (`operationsNational.js`, and the SW Mau desk in
+  // `operationsManager.js`). Unlike that queue these don't clear when acted
+  // on — notifications aren't wired to the ops session store, same as every
+  // other role's.
+  operations: [
+    {
+      id: 'ops-charcoal',
+      title: 'Cherangani · charcoal kilns in the buffer',
+      detail: 'Escalated to HQ — joint operation with KFS requested.',
+      when: '20 min ago',
+      to: 'incidents',
+    },
+    {
+      id: 'ops-float',
+      title: 'M-Pesa float short of Tuesday’s payrolls',
+      detail: `KES ${(NATIONAL.mpesa.floatKes / 1e6).toFixed(1)}M held; three zones still to release.`,
+      when: '1 hour ago',
+      to: 'people',
+    },
+    {
+      id: 'ops-kangaita',
+      title: 'Kangaita Tea Factory over capacity',
+      detail: 'Mount Kenya East flush at 111% of plan.',
+      when: '2 hours ago',
+      to: 'tea',
+    },
+    {
+      id: 'ops-breakdown',
+      title: 'SW Mau · KCD 118M broken down',
+      detail: '410 kg on board, Tinet run not collected.',
+      when: '9 min ago',
+      to: 'desk/logistics',
     },
   ],
   factory: [
