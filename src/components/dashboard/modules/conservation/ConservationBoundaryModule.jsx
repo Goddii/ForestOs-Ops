@@ -19,6 +19,7 @@ import BoundaryMapPanel from './BoundaryMapPanel'
 import IntegrityBar from './IntegrityBar'
 import Marker from './Marker'
 import ScreenHeader from './ScreenHeader'
+import SortableFrame from './SortableFrame'
 import { useScrollOnOpen, useSelectedParam } from './hooks'
 import { CAPTION } from './ui'
 
@@ -165,9 +166,9 @@ export default function ConservationBoundaryModule() {
         lede="Lowest integrity first. Segment lengths, beacon and sign counts are illustrative allocations, not surveyed."
         actions={<PrototypeTag label="Proposed weights" />}
       >
-        <div className="[&_tr:has([data-selected='true'])]:bg-emerald-600/[0.07]">
+        <SortableFrame className="[&_tr:has([data-selected='true'])]:bg-emerald-600/[0.07]">
           <DataTable columns={SEGMENT_COLUMNS} rows={segments} renderCell={renderSegmentCell} sortable />
-        </div>
+        </SortableFrame>
         {segmentId && !segments.some((s) => s.id === segmentId) && (
           <p role="alert" className="mt-3 text-[12.5px] text-critical">
             {segmentId} is not a segment in your region.

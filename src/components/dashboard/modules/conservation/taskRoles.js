@@ -36,3 +36,12 @@ export const SUGGESTED_TASK = {
   beacon_or_fence_damage: 'fence_repair',
   other: 'field_check',
 }
+
+/** The task offered for each issue ticked on a patrol. */
+export const ISSUE_TASK = {
+  fence_gap: 'fence_repair',
+  missing_beacon_or_sign: 'beacon_replacement',
+  fresh_cutting: 'field_check',
+  livestock_sign: 'fence_repair',
+  fire_sign: 'firebreak_clearing',
+}

@@ -16,6 +16,10 @@ nav promises but the mockup only sketches inline); **Worker** and **Block
 Supervisor** are phone/USSD-frame mockups in frames.html and stay the
 companion mobile app + USSD channel's job, not rebuilt here.
 
+The **Conservation Officer** console (`/app/conservation`, Buffer Zones & Protected Forest) covers claims,
+incidents and KFS liaison, the boundary, tree survival, patrols and exports; see DESIGN.md's “Conservation Officer”
+section.
+
 **Prototype.** Every screen still renders from illustrative mock data
 (`dashboardData.js`, `zoneManager.js`, `systemAdmin.js`, `batchChain.js`,
 and friends) — nothing here talks to a real backend yet.

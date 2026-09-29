@@ -25,6 +25,7 @@ import Confirmation from './Confirmation'
 import IntervalBar from './IntervalBar'
 import Marker from './Marker'
 import ScreenHeader from './ScreenHeader'
+import SortableFrame from './SortableFrame'
 import { useActionRunner, useSelectedParam } from './hooks'
 import { assigneeTitle } from './taskRoles'
 import { BTN_SMALL, CAPTION, ERROR } from './ui'
@@ -236,7 +237,9 @@ export default function ConservationSurvivalModule() {
         title="Counts received"
         lede="The newest first. The bar is the 95% range of the count on a 0 to 100% track; the tick is the threshold."
       >
-        <DataTable columns={CHECK_COLUMNS} rows={checkTable} renderCell={renderCheck} sortable />
+        <SortableFrame>
+          <DataTable columns={CHECK_COLUMNS} rows={checkTable} renderCell={renderCheck} sortable />
+        </SortableFrame>
         <p className={CAPTION + ' mt-3'}>
           A sample of {S.sampleSize} trees leaves a wide range, so a wide bar is normal.
         </p>

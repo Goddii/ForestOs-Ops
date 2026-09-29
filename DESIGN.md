@@ -464,6 +464,37 @@ mobile search, notification bell, sidebar collapse/close) are sized to a
 Centre Staff and Field Officer are meant to reach this software from a
 tablet, not just a desktop pointer.
 
+## Conservation Officer
+
+A further role, **Conservation Officer** (`/app/conservation`, NTZDC's Buffer Zones & Protected Forest unit),
+decides the conservation claims that workers and block supervisors send from the mobile app or USSD, tracks
+tree survival, watches the buffer boundary, escalates incidents to the Kenya Forest Service (KFS), keeps
+patrols and maintenance on schedule and produces three exports (KFS, KEFRI's Jaza Miti, head office). Seven
+screens read one provider that a layout route mounts, so session state and the demo clock survive moving
+between them. Nothing here is built for workers or supervisors, and there is no backend, SMS or real auth.
+
+**Layers.** `lib/conservation/` is pure and Node-importable (`policy`, `rules`, `selectors`, `reducer`,
+`exports`, `labels`); seed data is `lib/dashboard/{ntzdcStructure,conservation}.js`; screens hold no numbers of
+their own. Every list, KPI and export goes through the account's `scope`. Actions are `{ type, payload }`.
+`npm run check:conservation` asserts the rules, the seed and a replay of the walkthrough.
+
+**Decisions.**
+- Custodian, not owner: the land is gazetted under KFS, so an incident leaves the console as an escalation
+  ladder of texts (station in-charge, county Ecosystem Conservator, KFS Commandant), kept as data.
+- Controls, not automation: an approval with any flag, or of 3 ha or more, needs a second signature. Flags,
+  status and overdue are derived, never stored, and each action appends a chained activity entry (a check
+  value, not a signature).
+- Survival is judged on a Wilson interval; trees are credited at its conservative lower bound.
+- Time is a demo clock (16 Sep 2026 07:12 EAT, plus real time and the Prototype control) passed into every
+  rule. Times display in EAT through one formatter.
+- Worker identifiers never reach exports, texts, notifications or search. Files are named
+  `PROTOTYPE-ILLUSTRATIVE-…` and end in `data_status = illustrative`.
+
+**Proposed, inferred, derived.** Every threshold in `policy.js` is proposed (the UI says "Proposed policy")
+and every escalation window is a target, not a deadline. The region grouping, counties, Mau belt lengths (pro
+rata to hectares) and the plot-to-zone assignment are assumed, inferred or derived, and carry a small marker.
+Zone and belt figures come from the NTZDC Annual Report FY2021/22 with its oddities kept, not reconciled.
+
 ## Scope narrowed to NTZDC employees only
 
 This console is now internal-only: Block Operations, Zone Manager, National

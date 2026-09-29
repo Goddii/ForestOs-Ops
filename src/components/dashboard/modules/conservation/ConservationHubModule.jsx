@@ -14,6 +14,7 @@ import {
 } from '../../../../lib/conservation/selectors'
 import Marker from './Marker'
 import ScreenHeader from './ScreenHeader'
+import SortableFrame from './SortableFrame'
 import { conPath } from './paths'
 import { CAPTION, CARD_LINK } from './ui'
 
@@ -192,7 +193,9 @@ export default function ConservationHubModule() {
         title="Zones in your region"
         lede="Hectares are as printed in the NTZDC annual report. Region, county and belt length are assumed, inferred or derived; see the note below the table."
       >
-        <DataTable columns={ZONE_COLUMNS} rows={zones} renderCell={renderZoneCell} sortable />
+        <SortableFrame>
+          <DataTable columns={ZONE_COLUMNS} rows={zones} renderCell={renderZoneCell} sortable />
+        </SortableFrame>
         <details className="mt-4 rounded-lg border border-line bg-paper-sunk/40 px-4 py-3 text-[12px] leading-relaxed text-ink-muted">
           <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-[0.1em] text-ink-muted">
             About these zone figures
