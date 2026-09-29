@@ -56,7 +56,10 @@ export default function ConservationIncidentDetail({ incidentId, onBack }) {
   if (!detail) {
     return (
       <div className="space-y-5">
-        <BackLink onClick={onBack}>Back to incidents</BackLink>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <BackLink onClick={onBack}>Back to incidents</BackLink>
+          <DemoClock />
+        </div>
         <Callout tone="warn" role="alert" title="Incident not found">
           <span ref={headingRef} tabIndex={-1}>
             {incidentId} is not in your region.

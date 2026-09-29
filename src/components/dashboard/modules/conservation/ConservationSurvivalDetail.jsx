@@ -66,7 +66,10 @@ export default function ConservationSurvivalDetail({ checkId, onBack }) {
   if (!detail) {
     return (
       <div className="space-y-5">
-        <BackLink onClick={onBack}>Back to survival</BackLink>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <BackLink onClick={onBack}>Back to survival</BackLink>
+          <DemoClock />
+        </div>
         <Callout tone="warn" role="alert" title="Count not found">
           <span ref={headingRef} tabIndex={-1}>
             {checkId} is not in your region, or it has not arrived yet.

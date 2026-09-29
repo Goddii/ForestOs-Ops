@@ -184,7 +184,7 @@ export default function ConservationBoundaryModule() {
             </p>
             <ul className="list-disc space-y-1 pl-4">
               <li>Fence continuity is one less the length of gaps in the fence or hedge, as a share of the segment’s length.</li>
-              <li>Canopy intact is the canopy now as a share of the canopy at the baseline survey, capped at 100%.</li>
+              <li>Canopy intact is the canopy now as a share of the canopy at the baseline survey, capped at {formatPct(1)}.</li>
               <li>Beacons and signs is those in place as a share of those planned.</li>
               <li>The region’s figure weights each segment by its length.</li>
             </ul>

@@ -9,6 +9,7 @@ import {
   CLAIM_TYPE_LABEL,
   COPY,
   EVIDENCE_KIND_LABEL,
+  REJECT_REASON_LABEL,
   formatCoord,
   formatCount,
   formatDay,
@@ -124,9 +125,22 @@ function StateCards({ detail, runner }) {
   const { errors, run } = runner
   const { claim, status } = detail
   const request = claim.evidenceRequest
-  const signed = claim.decision?.countersign
+  const decision = claim.decision
+  const signed = decision?.countersign
   return (
     <>
+      {decision && (status === 'verified' || status === 'rejected') && (
+        <Callout
+          tone={status === 'rejected' ? 'warn' : 'positive'}
+          title={status === 'rejected' ? `Rejected · ${REJECT_REASON_LABEL[decision.reason]}` : 'Approved and verified'}
+        >
+          <p>
+            {status === 'rejected' ? 'Rejected' : 'Approved'} by {decision.decidedBy} on {formatEat(decision.decidedAt, 'datetime')} EAT.
+          </p>
+          {decision.note && <p className="mt-1">“{decision.note}”</p>}
+          {decision.justification && <p className="mt-1">Justification for the flags: {decision.justification}</p>}
+        </Callout>
+      )}
       {signed && (
         <Callout tone="positive" title={`Countersigned by ${signed.by}`}>
           Countersigned on {formatEat(signed.at, 'datetime')} EAT after being approved on{' '}
@@ -141,6 +155,11 @@ function StateCards({ detail, runner }) {
             signature, because it carries a flag or covers {POLICY.claims.countersignAreaHa} ha or more. The approver cannot
             countersign their own approval.
           </p>
+          {claim.decision.justification && (
+            <p className="mt-2 max-w-[64ch] text-[12.5px] leading-relaxed text-ink-muted">
+              Your justification: “{claim.decision.justification}”
+            </p>
+          )}
           <div className="mt-3">
             <button
               type="button"
@@ -206,7 +225,10 @@ export default function ConservationClaimDetail({ claimId, onBack }) {
   if (!detail) {
     return (
       <div className="space-y-5">
-        <BackLink onClick={onBack}>Back to queue</BackLink>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <BackLink onClick={onBack}>Back to queue</BackLink>
+          <DemoClock />
+        </div>
         <Callout tone="warn" role="alert" title="Claim not found">
           <span ref={headingRef} tabIndex={-1}>
             {claimId} is not in your region, or it has not arrived yet.
