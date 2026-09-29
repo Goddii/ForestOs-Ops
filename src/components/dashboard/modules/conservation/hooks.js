@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { COPY } from '../../../../lib/conservation/labels'
 
 /**
  * A selected record held only in the query string (`?claim=VER-0142`), so it
@@ -22,4 +23,34 @@ export function useFocusOn(key) {
     ref.current?.focus()
   }, [key])
   return ref
+}
+
+/**
+ * Runs actions against the provider and keeps the two things a screen shows
+ * afterwards: the polite confirmation line, and the error for the control that
+ * was refused (`errors[slot]`, shown next to it with `role="alert"`).
+ *
+ *   run(slot, { type, payload }, (result) => 'Approved VER-0140.', (result) => …)
+ *
+ * The confirmation always ends with the prototype note. Returns the outcome.
+ */
+export function useActionRunner(act) {
+  const [notice, setNotice] = useState('')
+  const [errors, setErrors] = useState({})
+  const run = useCallback(
+    (slot, action, describe, after) => {
+      const out = act(action)
+      if (!out.ok) {
+        setErrors({ [slot]: out.error })
+        return out
+      }
+      setErrors({})
+      setNotice(`${describe(out.result)} ${COPY.saved}`)
+      if (after) after(out.result)
+      return out
+    },
+    [act],
+  )
+  const fail = useCallback((slot, message) => setErrors({ [slot]: message }), [])
+  return { notice, errors, run, fail }
 }

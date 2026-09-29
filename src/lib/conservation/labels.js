@@ -74,6 +74,11 @@ export function formatCount(n) {
   return fraction ? `${grouped}.${fraction}` : grouped
 }
 
+/** Coordinates to four decimals, as text. */
+export function formatCoord(value) {
+  return value.toFixed(4)
+}
+
 /** Hectares without trailing zeros: `3` , `0.15`, `41.4`. */
 export function formatHa(n) {
   if (n === null || n === undefined) return '—'
@@ -431,6 +436,7 @@ export function periodRecordLabel(periodId, now) {
 
 export const COPY = {
   saved: 'Recorded in this session only. Prototype: nothing is written to a server.',
+  hint: 'Prototype: changes last for this session only.',
   proposedPolicy: 'Proposed policy',
   illustrativeSms: 'Illustrative message. Not sent to KFS.',
   smsSent: 'Sent (simulated). Nothing left this browser.',

@@ -4,7 +4,7 @@
 // Node-importable: the check script loads this file directly.
 
 import { CLAIM_FLAGS, ESCALATION, INCIDENT_STATUS_CHAIN, POLICY } from './policy.js'
-import { FLAG_POLICY, FLAG_RULE, SMS_TYPE, formatCount, formatDay, formatEat, formatHa } from './labels.js'
+import { FLAG_POLICY, FLAG_RULE, SMS_TYPE, formatCoord, formatCount, formatDay, formatEat, formatHa } from './labels.js'
 
 // ── Time ────────────────────────────────────────────────────────────────────
 
@@ -131,10 +131,7 @@ export function plotRadiusM(hectares) {
   return Math.sqrt((hectares * 10000) / Math.PI)
 }
 
-/** Coordinates to four decimals, as text. */
-export function formatCoord(value) {
-  return value.toFixed(4)
-}
+export { formatCoord }
 
 // ── Claims ──────────────────────────────────────────────────────────────────
 

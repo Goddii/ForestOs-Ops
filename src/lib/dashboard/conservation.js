@@ -26,7 +26,19 @@ import {
   makeSurvivalId,
   makeTaskId,
 } from '../contracts/ids.js'
-import { BELTS, PLOT_ZONE, REGION_BELT_KM, REGION_IDS, REGION_LABEL, ZONES, zoneCode } from './ntzdcStructure.js'
+import {
+  BELTS,
+  BELT_TOTALS,
+  MAU_RECONCILIATION,
+  PLOT_ZONE,
+  REGION_BELT_KM,
+  REGION_IDS,
+  REGION_LABEL,
+  STRUCTURE_SOURCE,
+  ZONES,
+  ZONE_TOTALS,
+  zoneCode,
+} from './ntzdcStructure.js'
 import { POLICY, deepFreeze } from '../conservation/policy.js'
 import { HOUR_MS, addDaysKey, destination, isoOf, msOf } from '../conservation/rules.js'
 
@@ -158,6 +170,13 @@ export const REF = deepFreeze({
   sentinel: SENTINEL,
   roles: ROLES,
   regions: REGION_IDS.map((regionId) => ({ regionId, label: REGION_LABEL[regionId], beltKm: REGION_BELT_KM[regionId] })),
+  // The source's own figures and oddities, kept visible on the Hub rather than reconciled.
+  structure: {
+    source: STRUCTURE_SOURCE,
+    zoneTotals: ZONE_TOTALS,
+    beltTotals: BELT_TOTALS,
+    mauReconciliation: MAU_RECONCILIATION,
+  },
 })
 
 // ── Claims ──────────────────────────────────────────────────────────────────

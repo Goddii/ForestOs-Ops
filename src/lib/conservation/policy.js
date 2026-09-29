@@ -187,3 +187,6 @@ export const EXPORT_PERIODS = Object.freeze(['last_30_days', 'month_to_date', 'a
 
 /** Who acts in the activity log for every officer action. */
 export const OFFICER_ID = 'CON-SR-01'
+
+/** Who signs a countersign in the prototype. The console acts as the unit head for that one step. */
+export const UNIT_HEAD_ID = 'UNIT-HEAD'
