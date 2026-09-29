@@ -5,6 +5,23 @@ import { DEFAULT_ROLE, roleFromPath } from '../lib/dashboard/roles'
 
 // Cross-cutting
 import OverviewLandscapeModule from '../components/dashboard/modules/OverviewLandscapeModule'
+// Operations Manager — national screens
+import NationalOverviewModule from '../components/dashboard/modules/operations/NationalOverviewModule'
+import TeaOperationsModule from '../components/dashboard/modules/operations/TeaOperationsModule'
+import ConservationOperationsModule from '../components/dashboard/modules/operations/ConservationOperationsModule'
+import PartnershipsModule from '../components/dashboard/modules/operations/PartnershipsModule'
+import PeoplePayrollModule from '../components/dashboard/modules/operations/PeoplePayrollModule'
+import EscalationsModule from '../components/dashboard/modules/operations/EscalationsModule'
+import ApprovalsBudgetModule from '../components/dashboard/modules/operations/ApprovalsBudgetModule'
+// Operations Manager — Zone Desk (one zone's block-level desk)
+import ZoneDesk from '../components/dashboard/modules/operations/ZoneDesk'
+import OperationsOverviewModule from '../components/dashboard/modules/operations/OperationsOverviewModule'
+import LeafLogisticsModule from '../components/dashboard/modules/operations/LeafLogisticsModule'
+import FieldTeamsModule from '../components/dashboard/modules/operations/FieldTeamsModule'
+import BufferConservationModule from '../components/dashboard/modules/operations/BufferConservationModule'
+import WorkOrdersModule from '../components/dashboard/modules/operations/WorkOrdersModule'
+import IncidentsModule from '../components/dashboard/modules/operations/IncidentsModule'
+import PayrollRunModule from '../components/dashboard/modules/operations/PayrollRunModule'
 // Zone Manager modules
 import ZoneOverviewModule from '../components/dashboard/modules/zone/ZoneOverviewModule'
 import BlockPerformanceModule from '../components/dashboard/modules/zone/BlockPerformanceModule'
@@ -41,8 +58,8 @@ const AS_OF = '2026-09-07'
 
 /**
  * The console's routed content, wrapped in the shared `AppShell` (sidebar +
- * topbar). NTZDC employees only — Zone Manager, Factory Manager, System
- * Admin. Brand/Buyer/Creator/ESG accounts live on the customer experience
+ * topbar). NTZDC employees only — Zone Manager, Factory Manager, Operations
+ * Manager, System Admin. Brand/Buyer/Creator/ESG accounts live on the customer experience
  * platform (`forestos-qr-landing`) instead, not here.
  *
  * The active role for display purposes follows the URL (`roleFromPath`), not
@@ -74,6 +91,23 @@ export default function B2BDashboard() {
         <Routes>
           {/* Cross-cutting — the Forest Line front door */}
           <Route path="overview" element={<OverviewLandscapeModule />} />
+
+          {/* Operations Manager — national head office */}
+          <Route path="operations" element={<NationalOverviewModule />} />
+          <Route path="operations/tea" element={<TeaOperationsModule />} />
+          <Route path="operations/conservation" element={<ConservationOperationsModule />} />
+          <Route path="operations/partnerships" element={<PartnershipsModule />} />
+          <Route path="operations/people" element={<PeoplePayrollModule />} />
+          <Route path="operations/incidents" element={<EscalationsModule />} />
+          <Route path="operations/approvals" element={<ApprovalsBudgetModule />} />
+          {/* Operations Manager — Zone Desk */}
+          <Route path="operations/desk" element={<ZoneDesk><OperationsOverviewModule /></ZoneDesk>} />
+          <Route path="operations/desk/logistics" element={<ZoneDesk><LeafLogisticsModule /></ZoneDesk>} />
+          <Route path="operations/desk/teams" element={<ZoneDesk><FieldTeamsModule /></ZoneDesk>} />
+          <Route path="operations/desk/conservation" element={<ZoneDesk><BufferConservationModule /></ZoneDesk>} />
+          <Route path="operations/desk/work" element={<ZoneDesk><WorkOrdersModule /></ZoneDesk>} />
+          <Route path="operations/desk/incidents" element={<ZoneDesk><IncidentsModule /></ZoneDesk>} />
+          <Route path="operations/desk/payroll" element={<ZoneDesk><PayrollRunModule /></ZoneDesk>} />
 
           {/* Zone Manager */}
           <Route path="zone" element={<ZoneOverviewModule />} />

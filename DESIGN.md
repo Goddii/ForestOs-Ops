@@ -583,3 +583,91 @@ buffer verified %) instead of `managementRollup()`, so the whole tour now
 reads from South West Mau data. `DEFAULT_ROLE` (`ROLES[0]`) is now Zone
 Manager. Earlier sections of this file still describe the two roles as they
 were built.
+
+## Operations Manager (national)
+
+NTZDC's head of operations at head office: one office for **every zone and
+every kind of operation**. That means tea (leaf, fleet, factories, offtake),
+conservation (fire, patrols, planting, survival, boundaries), partnerships,
+people and payroll, incidents, and operational spending. He reports to the
+Managing Director; zone managers escalate operational matters up to him.
+With National Management removed (above), this is the console's one
+national view: it runs the zones day to day and takes the decisions a
+single zone can't. Demo identity: Peter Langat · OPS-HQ-01. The six zones,
+with their patrol counts, rejection rates and NDVI series, were carried over
+from the removed `ntzdcManagement.js` into `operationsNational.js`.
+
+**National screens** (`/app/operations/*`, `components/dashboard/modules/operations/`,
+data in `lib/dashboard/operationsNational.js`):
+
+- **Operations Overview**: national KPIs; **Zones at a glance** (leaf,
+  turnout, fleet, incidents, payroll, fire, status per zone); **Needs your
+  decision** (HQ-level items only; block-level work stays on the desks);
+  a report to the MD composed live from current state; a national
+  calendar; and the session decision log.
+- **Tea Operations**: leaf vs plan, leaf age, rejection, fine-leaf and late
+  plucking rounds by zone; factory capacity with **leaf diversion** from an
+  over-capacity factory to one with headroom; **fleet sharing** (lend a spare
+  lorry to a zone with lorries down); offtake obligations.
+- **Conservation Operations**: fire danger + firebreaks + **order fire
+  watch** per zone, patrols vs target, planting readiness, survival, missing
+  beacons, and each zone's NDVI series; **move surplus seedlings** between
+  zone nurseries.
+- **Partnerships**: twelve relationships (KFS, KWS, CFAs, county
+  governments, a supplying factory, a direct buyer, the auction broker, the
+  ESG funder, the certifier, M-Pesa, the USSD/SMS provider, research and seed
+  institutes). Each shows its next obligation, a due date, a state and a next
+  action, sorted worst first, plus a contact log.
+- **People & Payroll**: the **M-Pesa B2C float** against all unreleased zone
+  payrolls, with a top-up request to Finance; per zone, turnout, payroll
+  status, settlement days (target under 7), disputes, grievances and
+  injuries, with chase actions.
+- **Incidents & Escalations**: what zones escalated to HQ, and HQ support to
+  send (security liaison, HR, H&S, legal, comms, engineering). Closing needs
+  an outcome note.
+- **Approvals & Budget**: spending referred up from zones. The Ops Manager
+  approves up to **KES 2M** per commitment; above that only "Recommend to MD"
+  is offered, never approve. Field opex by zone against budget sits below.
+
+**Zone Desk** (`/app/operations/desk/*`, `ZoneDesk.jsx`) is the HQ manager
+stepping into one zone's block-level desk, with a zone picker and its own tab
+row. South West Mau is wired in full (the screens built first:
+`operationsManager.js` data). They are the desk overview (needs action,
+daily report to the Zone Manager, calendar, block readiness), Leaf Logistics
+(breakdown cover, dispatch, fleet servicing and inspection, weighbridge
+re-verification), Field Teams (muster, device sync, redeployment, **plucking
+rounds**), Buffer & Conservation (fire watch and firebreak orders, patrols,
+nursery allocation, **survival checks and replanting**, beacons), Work
+Orders & Stores (the desk's own KES 100k limit; above it the requisition is
+**referred to HQ** and lands on Approvals), Incidents (including injuries
+with statutory reports, wildlife with KWS, grievances), and Payroll Run
+(maker–checker release). The other five zones show their national snapshot
+and say plainly that their full desk isn't wired into the prototype.
+
+**One store, national + desk.** `lib/dashboard/operationsStore.js` is a
+`useSyncExternalStore` store seeded from both data files. South West Mau's
+national row is *computed from the desk state* (`swmRow`), so desk actions
+roll up: covering a breakdown, releasing payroll or referring a requisition
+changes the national screens. HQ actions also flow down: ordering fire watch
+for SW Mau turns on the desk's own fire watch, and HQ support on a desk
+incident shows on it. In-memory only; a reload or "Reset demo" restores the
+seed. Each exported action is the call a real backend would receive.
+
+**Honest boundaries kept.** Maker–checker on payroll (no one approves a block
+on a supervisor's behalf). Delegated authority is enforced in the store,
+not just hidden in the UI: an over-limit approval returns without effect.
+KFS and KWS are shown as requests, not crews the desk commands. Part-issues
+record the shortfall. Closing an incident needs a written note. New facts
+this role introduces are phrased as observations, never conclusions.
+
+**Shell touches.** Breadcrumbs now match a module by prefix (longest wins),
+so Zone Desk sub-screens read "Zone Desk" instead of falling back to the
+first module. On the sign-in page, each demo account is a button that fills
+its email and focuses the password (the form stays the only way in), and
+the hero copy names operations managers.
+
+**A third gold button.** The amber-400 action on the dark emerald-950 card
+was reserved for moments where a human action becomes irreversible,
+externally visible fact (Zone Sign-off, Admin's release to ForestOS).
+Releasing a payroll batch to M-Pesa is a third, behind an explicit confirm
+step.

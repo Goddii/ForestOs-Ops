@@ -9,6 +9,7 @@ import {
   Coins,
   FileDown,
   FolderTree,
+  Handshake,
   History,
   TriangleAlert,
   Landmark,
@@ -26,8 +27,10 @@ import {
   ShieldCheck,
   Siren,
   Sprout,
+  Trees,
   Users,
   Waypoints,
+  Wallet,
   X,
 } from 'lucide-react'
 import { modulePath } from '../../lib/dashboard/roles'
@@ -70,6 +73,14 @@ const NAV_ICON = {
   'Tree Survival': Sprout,
   'Patrols & Maintenance': Route,
   'Reports & Exports': FileDown,
+  'Operations Overview': LayoutGrid,
+  'Tea Operations': Leaf,
+  'Conservation Operations': Trees,
+  Partnerships: Handshake,
+  'People & Payroll': Users,
+  'Incidents & Escalations': TriangleAlert,
+  'Approvals & Budget': Wallet,
+  'Zone Desk': Map,
 }
 
 function navLinkClass({ isActive }) {
