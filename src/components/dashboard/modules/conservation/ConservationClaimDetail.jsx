@@ -23,6 +23,7 @@ import BackLink from './BackLink'
 import Callout from './Callout'
 import ClaimDecisionPanel from './ClaimDecisionPanel'
 import ClaimStepper from './ClaimStepper'
+import DemoClock from './DemoClock'
 import Marker from './Marker'
 import { useActionRunner, useFocusOn } from './hooks'
 import { BTN_PRIMARY, BTN_SECONDARY, CAPTION, ERROR } from './ui'
@@ -230,25 +231,28 @@ export default function ConservationClaimDetail({ claimId, onBack }) {
         </div>
       </div>
 
-      <header>
-        <h2
-          ref={headingRef}
-          tabIndex={-1}
-          className="font-sans text-2xl font-bold tracking-tight text-emerald-950 focus:outline-none sm:text-3xl"
-        >
-          {claim.claimId} · {CLAIM_TYPE_LABEL[claim.type]}
-        </h2>
-        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint">
-          Plot {claim.plotId}
-          {claim.legacyPlotId ? ` (legacy ${claim.legacyPlotId})` : ''} · {zone?.name ?? claim.zoneId} · reported{' '}
-          {formatEat(claim.reportedAt, 'date')}
-        </p>
-        {claim.legacyRef && (
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <header>
+          <h2
+            ref={headingRef}
+            tabIndex={-1}
+            className="font-sans text-2xl font-bold tracking-tight text-emerald-950 focus:outline-none sm:text-3xl"
+          >
+            {claim.claimId} · {CLAIM_TYPE_LABEL[claim.type]}
+          </h2>
           <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint">
-            Legacy ref {claim.legacyRef} (former Block Operations queue)
+            Plot {claim.plotId}
+            {claim.legacyPlotId ? ` (legacy ${claim.legacyPlotId})` : ''} · {zone?.name ?? claim.zoneId} · reported{' '}
+            {formatEat(claim.reportedAt, 'date')}
           </p>
-        )}
-      </header>
+          {claim.legacyRef && (
+            <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint">
+              Legacy ref {claim.legacyRef} (former Block Operations queue)
+            </p>
+          )}
+        </header>
+        <DemoClock />
+      </div>
 
       <Panel title="Pipeline" lede="Where this claim sits between the report from the field and a verified record.">
         <ClaimStepper claim={claim} status={status} />

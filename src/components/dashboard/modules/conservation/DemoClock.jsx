@@ -19,7 +19,7 @@ export default function DemoClock() {
     <div
       role="group"
       aria-label="Prototype control: demo clock"
-      className="rounded-xl border border-line bg-card px-3 py-2 shadow-card"
+      className="rounded-xl border border-line bg-card px-3 py-2 shadow-card sm:max-w-[22rem]"
     >
       <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-faint">Prototype control</p>
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1.5">

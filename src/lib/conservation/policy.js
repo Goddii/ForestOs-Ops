@@ -55,7 +55,7 @@ export const POLICY = deepFreeze({
     baselineDate: '2020-12-31',
   },
   incidents: { closeNoteMinChars: 20 },
-  tasks: { blockReasonMinChars: 10 },
+  tasks: { blockReasonMinChars: 10, defaultDueDays: 7 },
   sms: { maxChars: 160 },
 })
 

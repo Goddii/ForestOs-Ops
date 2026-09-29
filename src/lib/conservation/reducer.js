@@ -114,7 +114,7 @@ function buildTask(state, spec, now) {
     plotId: spec.plotId ?? null,
     linkedRef: spec.linkedRef ?? null,
     assigneeRole: spec.assigneeRole,
-    dueOn: spec.dueOn ?? addDaysKey(eatDateKey(now), 7),
+    dueOn: spec.dueOn ?? addDaysKey(eatDateKey(now), POLICY.tasks.defaultDueDays),
     status: 'planned',
     blockedReason: null,
     quantity: spec.quantity ?? null,
