@@ -54,3 +54,17 @@ export function useActionRunner(act) {
   const fail = useCallback((slot, message) => setErrors({ [slot]: message }), [])
   return { notice, errors, run, fail }
 }
+
+/**
+ * Brings the returned ref's element into view once, when the screen opens with a
+ * deep link (`?alert=…`) so the record is on screen, not somewhere below the fold.
+ */
+export function useScrollOnOpen(key) {
+  const ref = useRef(null)
+  const done = useRef(false)
+  useEffect(() => {
+    if (key && !done.current) ref.current?.scrollIntoView({ block: 'start' })
+    done.current = true
+  }, [key])
+  return ref
+}

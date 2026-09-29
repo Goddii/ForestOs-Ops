@@ -436,6 +436,11 @@ export function survivalRows(ctx) {
     .sort((a, b) => msOf(b.check.checkedAt) - msOf(a.check.checkedAt) || b.id.localeCompare(a.id))
 }
 
+/** The open count request linked to a planting or a count, if any. */
+export function openCountRequest(ctx, linkedRef) {
+  return ctx.state.tasks.find((t) => t.type === 'count_request' && t.linkedRef === linkedRef && t.status !== 'done') ?? null
+}
+
 /** The open replanting order for a planting, if any: linked to one of its counts and not done. */
 export function openReplantingOrder(ctx, claimId) {
   const ids = new Set(ctx.state.survivalChecks.filter((c) => c.claimId === claimId).map((c) => c.checkId))
@@ -450,6 +455,8 @@ export function survivalDetail(ctx, checkId) {
     trend: [...row.earlier, row.check].map((c) => ({
       checkId: c.checkId,
       checkpointDays: c.checkpointDays,
+      alive: c.alive,
+      sampleSize: c.sampleSize,
       pct: c.alive / c.sampleSize,
     })),
     replantingQuantity: row.trees !== null ? row.trees - Math.round((row.trees * row.check.alive) / row.check.sampleSize) : null,
