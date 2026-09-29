@@ -4,7 +4,8 @@
 // Capital accounts were removed from here: those external partners connect
 // through the customer experience platform (`forestos-qr-landing`), not this
 // internal console. Block Operations and National Management were removed
-// later; see DESIGN.md.
+// later; see DESIGN.md. The Conservation Officer (Buffer Zones & Protected
+// Forest) was added afterwards; see DESIGN.md's "Conservation Officer".
 //
 // Access is role-based from the sign-in step (`lib/session.js`,
 // `routes/SignIn.jsx`) — there is no in-app switcher; changing role means
@@ -36,6 +37,35 @@ export const ROLES = [
       { to: 'exceptions', label: 'Exceptions' },
       { to: 'pay', label: 'Pay & Parity' },
       { to: 'signoff', label: 'Zone Sign-off' },
+    ],
+  },
+  {
+    id: 'conservation',
+    label: 'Conservation Officer View',
+    base: '/app/conservation',
+    scopeLabel: 'Region',
+    // The one account shipped is the South Rift regional officer. Every list,
+    // KPI and export is computed through this scope, so a national unit-head
+    // seat is a second entry here, not new logic. Optional keys `scope` and
+    // `asOf` are set by this role only.
+    scope: { level: 'region', regionId: 'south_rift' },
+    asOf: '2026-09-16',
+    org: {
+      name: 'NTZDC — Buffer Zones & Protected Forest',
+      role: 'Conservation Officer',
+      scope: 'South Rift Region · 4 zones',
+      code: 'NTZDC-BZPF-SR',
+      since: '2019',
+    },
+    person: { name: 'Conservation Officer · South Rift', id: 'CON-SR-01', email: 'conservation.sr@ntzdc.go.ke' },
+    modules: [
+      { to: '', label: 'Conservation Hub', end: true },
+      { to: 'verification', label: 'Verification Queue' },
+      { to: 'incidents', label: 'Incidents & KFS Liaison' },
+      { to: 'boundary', label: 'Boundary & Encroachment' },
+      { to: 'survival', label: 'Tree Survival' },
+      { to: 'patrols', label: 'Patrols & Maintenance' },
+      { to: 'reports', label: 'Reports & Exports' },
     ],
   },
   {

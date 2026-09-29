@@ -27,6 +27,15 @@ import PeopleRolesModule from '../components/dashboard/modules/admin/PeopleRoles
 import AuditLogModule from '../components/dashboard/modules/admin/AuditLogModule'
 import IntegrationsModule from '../components/dashboard/modules/admin/IntegrationsModule'
 import ExportsModule from '../components/dashboard/modules/admin/ExportsModule'
+// Conservation Officer modules
+import ConservationLayout from '../components/dashboard/modules/conservation/ConservationLayout'
+import ConservationHubModule from '../components/dashboard/modules/conservation/ConservationHubModule'
+import ConservationVerificationModule from '../components/dashboard/modules/conservation/ConservationVerificationModule'
+import ConservationIncidentsModule from '../components/dashboard/modules/conservation/ConservationIncidentsModule'
+import ConservationBoundaryModule from '../components/dashboard/modules/conservation/ConservationBoundaryModule'
+import ConservationSurvivalModule from '../components/dashboard/modules/conservation/ConservationSurvivalModule'
+import ConservationPatrolsModule from '../components/dashboard/modules/conservation/ConservationPatrolsModule'
+import ConservationReportsModule from '../components/dashboard/modules/conservation/ConservationReportsModule'
 
 const AS_OF = '2026-09-07'
 
@@ -58,7 +67,7 @@ export default function B2BDashboard() {
       <div className="flex items-center gap-2 border-b border-line bg-paper-sunk/60 px-4 py-1.5 sm:px-8">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" aria-hidden="true" />
         <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">
-          Prototype · every figure is illustrative mock data, not verified evidence · as of {AS_OF}
+          Prototype · every figure is illustrative mock data, not verified evidence · as of {role.asOf ?? AS_OF}
         </p>
       </div>
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-8 sm:py-8">
@@ -73,6 +82,21 @@ export default function B2BDashboard() {
           <Route path="zone/exceptions" element={<ExceptionsModule />} />
           <Route path="zone/pay" element={<PayParityModule />} />
           <Route path="zone/signoff" element={<ZoneSignOffModule />} />
+
+          {/* Conservation Officer — the one nested route group in this file, on
+              purpose: the layout mounts the provider (session state and the demo
+              clock) once, and it must stay mounted while the officer moves
+              between screens. The screens themselves have no nested routes;
+              the selected record lives in the query string. */}
+          <Route path="conservation" element={<ConservationLayout />}>
+            <Route index element={<ConservationHubModule />} />
+            <Route path="verification" element={<ConservationVerificationModule />} />
+            <Route path="incidents" element={<ConservationIncidentsModule />} />
+            <Route path="boundary" element={<ConservationBoundaryModule />} />
+            <Route path="survival" element={<ConservationSurvivalModule />} />
+            <Route path="patrols" element={<ConservationPatrolsModule />} />
+            <Route path="reports" element={<ConservationReportsModule />} />
+          </Route>
 
           {/* Factory Manager */}
           <Route path="factory" element={<FactoryOverviewModule />} />

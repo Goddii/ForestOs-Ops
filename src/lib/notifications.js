@@ -7,6 +7,18 @@
 import { ZONE } from './dashboard/zoneManager'
 import { ADMIN } from './dashboard/systemAdmin'
 import { FACTORY } from './dashboard/factoryManager'
+import { ROLES } from './dashboard/roles'
+import { CLOCK_START_MS, REF, SEED_STATE } from './dashboard/conservation'
+import { notificationItems } from './conservation/selectors'
+
+// The Conservation Officer's notifications read their counts from the same
+// selectors the screens use, evaluated on the seed at the demo start.
+const CONSERVATION_CTX = {
+  now: CLOCK_START_MS,
+  scope: ROLES.find((role) => role.id === 'conservation').scope,
+  state: SEED_STATE,
+  ref: REF,
+}
 
 const GENERIC = [
   {
@@ -19,6 +31,7 @@ const GENERIC = [
 ]
 
 const BY_ROLE = {
+  conservation: notificationItems(CONSERVATION_CTX),
   zone: [
     {
       id: 'zone-fire',

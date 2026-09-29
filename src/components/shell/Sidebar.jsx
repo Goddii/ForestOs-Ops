@@ -19,10 +19,12 @@ import {
   Plug,
   QrCode,
   Radio,
+  Route,
   Satellite,
   ScanLine,
   Scale,
   ShieldCheck,
+  Siren,
   Sprout,
   Users,
   Waypoints,
@@ -61,6 +63,13 @@ const NAV_ICON = {
   'Audit Log': History,
   Integrations: Plug,
   'Verified Claims Export': FileDown,
+  'Conservation Hub': LayoutGrid,
+  'Verification Queue': ClipboardCheck,
+  'Incidents & KFS Liaison': Siren,
+  'Boundary & Encroachment': Satellite,
+  'Tree Survival': Sprout,
+  'Patrols & Maintenance': Route,
+  'Reports & Exports': FileDown,
 }
 
 function navLinkClass({ isActive }) {
