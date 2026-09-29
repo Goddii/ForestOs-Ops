@@ -13,6 +13,7 @@
     "prebuild": "node scripts/copy-cesium.mjs",
     "build": "vite build",
     "lint": "oxlint",
+    "check:conservation": "node scripts/check-conservation-rules.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
