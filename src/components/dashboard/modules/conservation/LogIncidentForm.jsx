@@ -74,7 +74,7 @@ export default function LogIncidentForm({ segments, zoneName, runner, onClose })
         </label>
         <input id="log-lon" type="text" inputMode="decimal" value={lon} onChange={(event) => setLon(event.target.value)} autoComplete="off" aria-describedby="log-gps-hint" className={INPUT} />
         <p id="log-gps-hint" className={HINT}>
-          Decimal degrees, for example −0.3956 and 35.5900. Without a position the message to KFS leaves out its GPS line.
+          Decimal degrees, for example −0.4767 and 35.4401. Without a position the message to KFS leaves out its GPS line.
         </p>
       </div>
       <div className="sm:col-span-2">

@@ -15,7 +15,8 @@
 
 import assert from 'node:assert/strict'
 
-import { EUDR } from '../src/lib/dashboardData.js'
+import { COLLECTION_CENTRES, EUDR, NDVI_GRID, SECTOR, SECTOR_OUTLINE } from '../src/lib/dashboardData.js'
+import { clusterPixels, locateAgainstForest } from '../server/gfwAlerts.js'
 import { hasPrefix } from '../src/lib/contracts/ids.js'
 import {
   BELTS,
@@ -408,7 +409,7 @@ check('incidents: median minutes to the first KFS message is 50; closed in Augus
 })
 
 const FIRE_SMS =
-  'NTZDC FIRE: Kiptunga NW, Olenguruone zone. GPS -0.3956,35.5900. Approx 2 ha. 3 reports since 06:52. Ref INC0187. Reply ACK 0187'
+  'NTZDC FIRE: Kiptunga NW, Olenguruone zone. GPS -0.4767,35.4401. Approx 2 ha. 3 reports since 06:52. Ref INC0187. Reply ACK 0187'
 const smsFor = (incident) =>
   R.buildEscalationSms(incident, REF.zones.find((z) => z.zoneId === incident.zoneId), REF.segments.find((s) => s.segmentId === incident.segmentId))
 
@@ -831,7 +832,7 @@ check('exports: KFS register cells — EAT stamps, blanks not "null", first rung
   const rows = Object.fromEntries(build('kfs_register', 'all_time').table.rows.map((r) => [r[0], r]))
   const fire = rows['INC-2026-0187']
   assert.deepEqual(fire.slice(0, 5), ['INC-2026-0187', 'fire', 'critical', 'Olenguruone', 'Nakuru'])
-  assert.deepEqual(fire.slice(5, 12), ['Kiptunga NW', '-0.3956', '35.5900', '2026-09-16 06:52', '3', '2', 'escalated'])
+  assert.deepEqual(fire.slice(5, 12), ['Kiptunga NW', '-0.4767', '35.4401', '2026-09-16 06:52', '3', '2', 'escalated'])
   assert.deepEqual(fire.slice(12), ['station_in_charge', '2026-09-16 06:58', '', '', 'illustrative'])
   const grazing = rows['INC-2026-0184']
   assert.deepEqual(grazing.slice(10, 16), ['', 'triaged', '', '', '', ''])
@@ -974,11 +975,11 @@ check('time: the rules’ EAT day arithmetic agrees with the formatter', () => {
 check('geodesy: destination and haversine round-trip', () => {
   const plot = EUDR.plots.find((p) => p.id === 'KIP-17')
   const fire = R.destination(plot, 0, 450)
-  assert.equal(R.formatCoord(fire.lat), '-0.3956')
-  assert.equal(R.formatCoord(fire.lon), '35.5900')
+  assert.equal(R.formatCoord(fire.lat), '-0.4767')
+  assert.equal(R.formatCoord(fire.lon), '35.4401')
   for (const bearing of [0, 47, 135, 200, 270, 359]) near(R.haversine(plot, R.destination(plot, bearing, 321)), 321, 1e-6, `bearing ${bearing}`)
   assert.equal(R.EARTH_RADIUS_M, 6371008.8)
-  assert.equal(incidentById('INC-2026-0187').lat.toFixed(4), '-0.3956')
+  assert.equal(incidentById('INC-2026-0187').lat.toFixed(4), '-0.4767')
 })
 
 // ── 10. Walkthrough replay (section 11.C, steps 2 to 10) ────────────────────
@@ -1215,6 +1216,81 @@ check('reducer: task transitions follow the table', () => {
   assert.equal(state.tasks.find((t) => t.taskId === 'MT-0001').status, 'in_progress')
   const planting = ok(SEED_STATE, 'UPDATE_TASK', { taskId: 'MT-0004', action: 'complete' })
   assert.equal(planting.state.patrolLogs.find((l) => l.logId === 'BM-332').kind, 'fence') // fence_repair → fence
+})
+
+// ── Sector geography ────────────────────────────────────────────────────────
+// The forest outline is real (OpenStreetMap); everything placed in it is
+// generated relative to it, so these checks pin the relationship.
+
+check('geography: the sector box contains the outline and the centre is inside its box', () => {
+  const { bounds } = SECTOR_OUTLINE
+  assert.ok(SECTOR.bbox.west <= bounds.west && SECTOR.bbox.south <= bounds.south && SECTOR.bbox.east >= bounds.east && SECTOR.bbox.north >= bounds.north)
+  assert.ok(SECTOR.center.lon > SECTOR.bbox.west && SECTOR.center.lon < SECTOR.bbox.east)
+  assert.ok(SECTOR.center.lat > SECTOR.bbox.south && SECTOR.center.lat < SECTOR.bbox.north)
+  assert.ok(SECTOR.outline.areaHa > 20000 && SECTOR.outline.areaHa < 23000, `area ${SECTOR.outline.areaHa} ha`)
+})
+
+check('geography: inside/outside and edge distance behave on the real outline', () => {
+  const deep = SECTOR_OUTLINE.labelPoint()
+  assert.ok(SECTOR_OUTLINE.contains(deep.lon, deep.lat))
+  assert.ok(deep.depthM > 3000, `label point only ${deep.depthM} m from the edge`)
+  assert.equal(SECTOR_OUTLINE.contains(35.9, -0.47), false) // 50 km east
+  near(SECTOR_OUTLINE.distanceM(SECTOR_OUTLINE.rings[0][10][0], SECTOR_OUTLINE.rings[0][10][1]), 0, 0.01, 'a vertex is on the edge')
+  const edge = SECTOR_OUTLINE.at(1234)
+  const moved = SECTOR_OUTLINE.inset(edge, 100)
+  assert.ok(SECTOR_OUTLINE.contains(moved.lon, moved.lat))
+})
+
+check('geography: every sample plot is inside the forest, near its edge, and clear of the others', () => {
+  assert.equal(EUDR.plots.length, 18)
+  for (const plot of EUDR.plots) {
+    assert.ok(SECTOR_OUTLINE.contains(plot.lon, plot.lat), `${plot.id} is outside the outline`)
+    assert.ok(SECTOR_OUTLINE.distanceM(plot.lon, plot.lat) < 600, `${plot.id} is ${SECTOR_OUTLINE.distanceM(plot.lon, plot.lat)} m from the edge`)
+  }
+  for (let i = 0; i < EUDR.plots.length; i += 1) {
+    for (let j = i + 1; j < EUDR.plots.length; j += 1) {
+      assert.ok(SECTOR_OUTLINE.metresBetween(EUDR.plots[i], EUDR.plots[j]) > 1500, `${EUDR.plots[i].id} and ${EUDR.plots[j].id} overlap`)
+    }
+  }
+})
+
+check('geography: Kericho-zone plots sit on the Kericho (west) side and Olenguruone plots on the east', () => {
+  const meanLon = (zone) => {
+    const own = EUDR.plots.filter((p) => PLOT_ZONE[p.id] === zone)
+    return sum(own.map((p) => p.lon)) / own.length
+  }
+  assert.ok(meanLon('MAU-KER') < SECTOR.center.lon, 'Kericho plots should be west of centre')
+  assert.ok(meanLon('MAU-OLE') > SECTOR.center.lon, 'Olenguruone plots should be east of centre')
+})
+
+check('geography: NDVI cells and collection-centre pins agree with the outline', () => {
+  assert.ok(NDVI_GRID.length > 100)
+  for (const cell of NDVI_GRID) {
+    const cx = (cell.ring[0] + cell.ring[2]) / 2
+    const cy = (cell.ring[1] + cell.ring[5]) / 2
+    assert.ok(SECTOR_OUTLINE.contains(cx, cy), `${cell.id} centre is outside the outline`)
+    assert.ok(cell.ndvi >= 0.22 && cell.ndvi <= 0.88)
+  }
+  const shallow = NDVI_GRID.filter((c) => SECTOR_OUTLINE.distanceM((c.ring[0] + c.ring[2]) / 2, (c.ring[1] + c.ring[5]) / 2) < 500)
+  const deep = NDVI_GRID.filter((c) => SECTOR_OUTLINE.distanceM((c.ring[0] + c.ring[2]) / 2, (c.ring[1] + c.ring[5]) / 2) > 4000)
+  const mean = (cells) => sum(cells.map((c) => c.ndvi)) / cells.length
+  assert.ok(mean(deep) > mean(shallow) + 0.15, 'the core should be greener than the edge')
+  assert.equal(COLLECTION_CENTRES.length, 4)
+  for (const centre of COLLECTION_CENTRES) assert.equal(SECTOR_OUTLINE.contains(centre.lon, centre.lat), false, `${centre.id} should be outside the forest`)
+})
+
+check('geography: Forest Watch clusters are merged, then kept only inside the forest or within 1 km of it', () => {
+  const pixel = (lat, lon, date, confidence) => ({ latitude: lat, longitude: lon, gfw_integrated_alerts__date: date, gfw_integrated_alerts__confidence: confidence })
+  const merged = clusterPixels([pixel(-0.47, 35.36, '2026-09-10', 'nominal'), pixel(-0.4701, 35.3601, '2026-09-12', 'high')])
+  assert.equal(merged.length, 1)
+  assert.deepEqual([merged[0].date, merged[0].confidence, merged[0].areaHa], ['2026-09-12', 'high', 0.02])
+  const kept = locateAgainstForest([
+    { lat: -0.47, lon: 35.36, areaHa: 1 }, // inside
+    { lat: -0.47, lon: 35.9, areaHa: 1 }, // 50 km east
+  ])
+  assert.equal(kept.length, 1)
+  assert.equal(kept[0].inside, true)
+  assert.ok(kept[0].edgeM > 1000)
 })
 
 // ── Result ──────────────────────────────────────────────────────────────────

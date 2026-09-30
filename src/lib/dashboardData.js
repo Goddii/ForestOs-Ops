@@ -1,28 +1,47 @@
 // Mock data for the NTZDC operations console. Illustrative only — there is
-// no ForestOS backend and none of these figures are real.
+// no ForestOS backend and none of these figures are real, with one exception:
+// the forest outline below is real geography (see geo/swMauOutline.js).
+
+import { SW_MAU_OUTLINE } from './geo/swMauOutline.js'
+import { makeOutline } from './geo/outline.js'
+import { PLOT_ZONE } from './dashboard/ntzdcStructure.js'
 
 // ── Sector geography — the covenant area this console operates ────────────
-// Everything the Sector Focus View renders is scoped to this one block of the
-// South West Mau, framed for a tilted 3D Cesium camera.
+// The sector is the South West Mau Forest as mapped in OpenStreetMap (about a
+// third of the gazetted reserve). Its outline, bounding box and centre are
+// real. Everything placed inside it (plots, NDVI shading, collection-centre
+// pins) is illustrative and positioned relative to that outline.
+export const SECTOR_OUTLINE = makeOutline(SW_MAU_OUTLINE.rings)
+
+const { bounds } = SECTOR_OUTLINE
+const floor4 = (n) => Math.floor(n * 1e4) / 1e4
+const ceil4 = (n) => Math.ceil(n * 1e4) / 1e4
+const mid4 = (a, b) => Math.round(((a + b) / 2) * 1e4) / 1e4
+
 export const SECTOR = {
   name: 'South West Mau Sector',
   code: 'SW-MAU',
   block: 'Kiptunga Block',
-  center: { lon: 35.642, lat: -0.472 },
-  bbox: { west: 35.508, south: -0.606, east: 35.776, north: -0.338 },
+  center: { lon: mid4(bounds.west, bounds.east), lat: mid4(bounds.south, bounds.north) },
+  // Rounded outward so the box always contains the outline.
+  bbox: { west: floor4(bounds.west), south: floor4(bounds.south), east: ceil4(bounds.east), north: ceil4(bounds.north) },
+  outline: {
+    name: SW_MAU_OUTLINE.name,
+    osm: SW_MAU_OUTLINE.osm,
+    attribution: SW_MAU_OUTLINE.attribution,
+    licence: SW_MAU_OUTLINE.licence,
+    areaHa: Math.round(SECTOR_OUTLINE.areaHa),
+  },
+  // Camera framing for the tilted 3D view, relative to the centre. Cesium's 60°
+  // field of view is horizontal on a wide panel and the tilt squeezes the far
+  // (north) end, so the camera sits high and well south to fit the whole 24 km
+  // outline: at 30 km and pitch -63° the outline reaches 93% of the frame's
+  // half-height on a 1.65:1 panel (checked by projecting every outline vertex).
   flight: {
-    start: { lon: 35.642, lat: -0.56, height: 52000, pitchDeg: -80, headingDeg: 0 },
-    target: { lon: 35.642, lat: -0.516, height: 16500, pitchDeg: -63, headingDeg: 8 },
+    start: { lon: mid4(bounds.west, bounds.east), lat: mid4(bounds.south, bounds.north) - 0.095, height: 60000, pitchDeg: -80, headingDeg: 0 },
+    target: { lon: mid4(bounds.west, bounds.east), lat: mid4(bounds.south, bounds.north) - 0.162, height: 30000, pitchDeg: -63, headingDeg: 8 },
   },
 }
-
-// Collection-centre pins inside the sector.
-export const COLLECTION_CENTRES = [
-  { id: 'CC-KPT', name: 'Kiptunga Collection Centre', lon: 35.618, lat: -0.415, pluckers: 1240 },
-  { id: 'CC-NES', name: 'Nessuit Collection Centre', lon: 35.702, lat: -0.523, pluckers: 880 },
-  { id: 'CC-MAR', name: 'Mariashoni Collection Centre', lon: 35.548, lat: -0.552, pluckers: 610 },
-  { id: 'CC-TIN', name: 'Tinet Collection Centre', lon: 35.741, lat: -0.436, pluckers: 430 },
-]
 
 // ── Module 1 — EUDR & plot compliance ──────────────────────────────────────
 const SECTOR_CENTRES = [
@@ -36,23 +55,71 @@ function unit(seed) {
   return x - Math.floor(x)
 }
 
+const PLOT_COUNT = 18
+const plotIdAt = (i) => `${SECTOR_CENTRES[i % SECTOR_CENTRES.length].slice(0, 3).toUpperCase()}-${String(i + 1).padStart(2, '0')}`
+
+// Real places that pull each Mau zone's sample plots to its own side of the
+// forest, from OpenStreetMap: a zone's plots take the stretch of forest edge
+// nearest its seat. For orientation only — not surveyed NTZDC locations.
+const ZONE_SEAT = {
+  'MAU-KUR': { lon: 35.667, lat: -0.399 }, // between Kuresoi North and Kuresoi South
+  'MAU-NYA': { lon: 35.355, lat: -0.778 }, // Nyangores river, Bomet
+  'MAU-KER': { lon: 35.283, lat: -0.367 }, // Kericho town
+  'MAU-OLE': { lon: 35.686, lat: -0.588 }, // Olenguruone
+}
+const ZONE_ORDER = ['MAU-KUR', 'MAU-NYA', 'MAU-KER', 'MAU-OLE'] // smallest belts choose their edge first
+
+// Candidate places for a plot: points every 250 m along the forest's outer
+// edge, each with a step inward so a plot straddles the edge rather than
+// sitting on the line. Sliver edges with no room inside are dropped.
+const EDGE_CANDIDATES = (() => {
+  const found = []
+  for (let arc = 0; arc < SECTOR_OUTLINE.perimeterM; arc += 250) {
+    const edge = SECTOR_OUTLINE.at(arc)
+    const slot = SECTOR_OUTLINE.inset(edge, 90 + unit(found.length + 23) * 260)
+    if (slot) found.push({ edge, arc: edge.arc, ...slot })
+  }
+  return found
+})()
+
+const MIN_PLOT_SPACING_M = 4000
+
+// Plot id → edge slot. Each zone takes the candidates nearest its seat, keeping
+// its plots at least MIN_PLOT_SPACING_M from every other plot so nothing piles
+// up along a ragged edge. Spacing relaxes only if the edge runs out of room.
+const SLOT_OF = (() => {
+  const taken = []
+  const slotOf = {}
+  for (const zone of ZONE_ORDER) {
+    const ids = Array.from({ length: PLOT_COUNT }, (_, i) => plotIdAt(i)).filter((id) => PLOT_ZONE[id] === zone)
+    const ranked = [...EDGE_CANDIDATES].sort(
+      (a, b) => SECTOR_OUTLINE.metresBetween(ZONE_SEAT[zone], a) - SECTOR_OUTLINE.metresBetween(ZONE_SEAT[zone], b),
+    )
+    let mine = []
+    for (const relax of [1, 0.6, 0.3, 0]) {
+      mine = []
+      for (const candidate of ranked) {
+        if (mine.length === ids.length) break
+        if ([...taken, ...mine].every((other) => SECTOR_OUTLINE.metresBetween(candidate, other) >= MIN_PLOT_SPACING_M * relax)) mine.push(candidate)
+      }
+      if (mine.length === ids.length) break
+    }
+    mine.sort((a, b) => a.arc - b.arc)
+    ids.forEach((id, n) => {
+      slotOf[id] = mine[n]
+    })
+    taken.push(...mine)
+  }
+  return slotOf
+})()
+
 function makePlots() {
-  const { west, south, east, north } = SECTOR.bbox
-  const spanLon = east - west
-  const spanLat = north - south
-  const cols = 5
-  const rows = 4
-  const pad = 0.13
-  return Array.from({ length: 18 }, (_, i) => {
+  return Array.from({ length: PLOT_COUNT }, (_, i) => {
     const centre = SECTOR_CENTRES[i % SECTOR_CENTRES.length]
-    const gx = i % cols
-    const gy = Math.floor(i / cols)
-    const jx = (unit(i + 1) - 0.5) * 0.72
-    const jy = (unit(i + 41) - 0.5) * 0.72
-    const fx = pad + ((gx + 0.5 + jx) / cols) * (1 - 2 * pad)
-    const fy = pad + ((gy + 0.5 + jy) / rows) * (1 - 2 * pad)
-    const lon = +(west + fx * spanLon).toFixed(4)
-    const lat = +(south + fy * spanLat).toFixed(4)
+    const id = plotIdAt(i)
+    const slot = SLOT_OF[id]
+    const lon = +slot.lon.toFixed(4)
+    const lat = +slot.lat.toFixed(4)
     const canopy2020 = 58 + ((i * 7) % 30)
     const drift = ((i * 13) % 11) - 3
     const canopyNow = Math.min(97, canopy2020 + drift)
@@ -62,7 +129,7 @@ function makePlots() {
     const half = 0.0017 + hectares * 0.0007 // ring half-edge, degrees
     const ndvi = +(0.42 + (canopyNow / 100) * 0.46).toFixed(2)
     return {
-      id: `${centre.slice(0, 3).toUpperCase()}-${String(i + 1).padStart(2, '0')}`,
+      id,
       centre,
       lat,
       lon,
@@ -85,11 +152,29 @@ function makePlots() {
 
 const EUDR_PLOTS = makePlots()
 
-// Coarse NDVI field across the sector bbox — greener toward the forest core,
-// thinner at the settled edges. Rendered as translucent graded cells.
+// Collection-centre pins, on the tea side of the forest edge just outside it,
+// beside the first plot that carries the centre's name. Positions are
+// illustrative; the names are the console's mock place names.
+const CENTRE_ROWS = [
+  ['CC-KPT', 'Kiptunga', 'KIP-01', 1240],
+  ['CC-NES', 'Nessuit', 'NES-02', 880],
+  ['CC-MAR', 'Mariashoni', 'MAR-03', 610],
+  ['CC-TIN', 'Tinet', 'TIN-04', 430],
+]
+
+export const COLLECTION_CENTRES = CENTRE_ROWS.map(([id, place, plotId, pluckers], n) => {
+  const slot = SLOT_OF[plotId]
+  const point = SECTOR_OUTLINE.outsideNear(slot.edge, (slot.inward + 180) % 360, 1200 + unit(n + 61) * 500)
+  return { id, name: `${place} Collection Centre`, lon: +point.lon.toFixed(4), lat: +point.lat.toFixed(4), pluckers }
+})
+
+// Coarse NDVI field across the forest — thin at the edge, lush toward the
+// core, so the shading follows the real outline. A cell is kept only if its
+// centre and at least two corners are inside the outline, which stops the
+// shading spilling far past the edge. Illustrative values, not measured.
 function makeNdviGrid() {
-  const cols = 9
-  const rows = 6
+  const cols = 30
+  const rows = 30
   const { west, south, east, north } = SECTOR.bbox
   const dLon = (east - west) / cols
   const dLat = (north - south) / rows
@@ -98,12 +183,15 @@ function makeNdviGrid() {
     for (let c = 0; c < cols; c += 1) {
       const w = west + c * dLon
       const s = south + r * dLat
-      const cx = (c + 0.5) / cols - 0.5
-      const cy = (r + 0.5) / rows - 0.42
-      const core = 1 - Math.min(1, Math.hypot(cx, cy) * 1.55)
+      const cx = w + dLon / 2
+      const cy = s + dLat / 2
+      if (!SECTOR_OUTLINE.contains(cx, cy)) continue
+      const cornersIn = [[w, s], [w + dLon, s], [w + dLon, s + dLat], [w, s + dLat]].filter(([x, y]) => SECTOR_OUTLINE.contains(x, y)).length
+      if (cornersIn < 2) continue
+      const core = Math.min(1, SECTOR_OUTLINE.distanceM(cx, cy) / 4500)
       const jitter = (((r * 7 + c * 13) % 5) - 2) * 0.015
-      const ndvi = Math.max(0.22, Math.min(0.88, +(0.34 + core * 0.5 + jitter).toFixed(2)))
-      cells.push({ id: `n${r}${c}`, ndvi, ring: [w, s, w + dLon, s, w + dLon, s + dLat, w, s + dLat] })
+      const ndvi = Math.max(0.22, Math.min(0.88, +(0.3 + core * 0.55 + jitter).toFixed(2)))
+      cells.push({ id: `n${r}-${c}`, ndvi, ring: [w, s, w + dLon, s, w + dLon, s + dLat, w, s + dLat] })
     }
   }
   return cells

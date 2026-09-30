@@ -3,6 +3,22 @@
 // any one block or zone. Sourced from frames.html's A1-A5 mockups.
 // Illustrative only; no real figures.
 
+import { EUDR, SECTOR_OUTLINE } from '../dashboardData.js'
+
+// Registry centroids follow the sector map, so the table and the map agree.
+// KIP-04 and KIP-12 are registry-only rows with no sector-map plot: they sit a
+// few hundred metres inside the forest from the sector plot they neighbour.
+const formatCentroid = ({ lat, lon }) => `${lat < 0 ? '−' : ''}${Math.abs(lat).toFixed(4)}, ${lon.toFixed(4)}`
+const sectorPlot = (id) => EUDR.plots.find((p) => p.id === id)
+function insideNear(id, metres) {
+  const plot = sectorPlot(id)
+  const bearing = [40, 130, 220, 310, 85, 175, 265, 355].find((b) => {
+    const p = SECTOR_OUTLINE.move(plot, b, metres)
+    return SECTOR_OUTLINE.contains(p.lon, p.lat)
+  })
+  return SECTOR_OUTLINE.move(plot, bearing ?? 0, bearing === undefined ? 0 : metres)
+}
+
 export const ADMIN = {
   asOf: '16 Sep 2026',
   zoneCount: 3,
@@ -45,10 +61,10 @@ export const ADMIN = {
       { label: '🌲 Mt Kenya', depth: 0, meta: 'not yet onboarded', faint: true },
     ],
     plotsInKiptunga: [
-      { id: 'KIP-01', ha: 1.2, centroid: '−0.4685, 35.6301', canopy2020: 58, canopyNow: 62, eudr: 'Clear' },
-      { id: 'KIP-04', ha: 2.4, centroid: '−0.4701, 35.6344', canopy2020: 65, canopyNow: 66, eudr: 'Clear' },
-      { id: 'KIP-09', ha: 3.6, centroid: '−0.4712, 35.6389', canopy2020: 68, canopyNow: 71, eudr: 'Clear' },
-      { id: 'KIP-12', ha: 2.8, centroid: '−0.4736, 35.6412', canopy2020: 61, canopyNow: 69, eudr: 'Clear' },
+      { id: 'KIP-01', ha: 1.2, centroid: formatCentroid(sectorPlot('KIP-01')), canopy2020: 58, canopyNow: 62, eudr: 'Clear' },
+      { id: 'KIP-04', ha: 2.4, centroid: formatCentroid(insideNear('KIP-01', 350)), canopy2020: 65, canopyNow: 66, eudr: 'Clear' },
+      { id: 'KIP-09', ha: 3.6, centroid: formatCentroid(sectorPlot('KIP-09')), canopy2020: 68, canopyNow: 71, eudr: 'Clear' },
+      { id: 'KIP-12', ha: 2.8, centroid: formatCentroid(insideNear('KIP-09', 400)), canopy2020: 61, canopyNow: 69, eudr: 'Clear' },
     ],
   },
   people: {

@@ -3,6 +3,7 @@ import { useReducedMotion } from 'framer-motion'
 import { Panel } from '../../DashboardKit'
 import ErrorBoundary from '../../../ErrorBoundary'
 import { STATUS_CSS, STATUS_LABEL } from '../../sector/sectorMapStyle'
+import { SECTOR } from '../../../../lib/dashboardData'
 import { useConservation } from '../../../../lib/conservation/context'
 import { COPY, formatHa } from '../../../../lib/conservation/labels'
 import { plotsInScope } from '../../../../lib/conservation/selectors'
@@ -28,7 +29,9 @@ const mapLoading = (
 
 /**
  * A sample of the sector's plots on the 3D map, for orientation only: the
- * segments themselves are not mapped in this prototype. The plot chips below
+ * segments themselves are not mapped in this prototype. The forest outline is
+ * real (OpenStreetMap forest cover); the plots, NDVI shading and pins are
+ * illustrative and placed relative to it. The plot chips below
  * the map are the keyboard and screen-reader path to every plot; the map
  * canvas is not focusable. The selected plot is local state, not a link.
  */
@@ -44,7 +47,7 @@ export default function BoundaryMapPanel() {
   return (
     <Panel
       title="Sample plots on the sector map"
-      lede={`Illustrative sample: ${plots.length} plots, ${formatHa(hectares)} ha. Segment geometry is not mapped in this prototype.`}
+      lede={`Illustrative sample: ${plots.length} plots, ${formatHa(hectares)} ha, placed along the forest edge on each zone’s side. The outline is real; the plots, NDVI shading and segments are not surveyed.`}
     >
       <div className="overflow-hidden rounded-xl border border-emerald-900/10">
         <div className="relative h-[58svh] min-h-[380px] w-full bg-forest-900">
@@ -68,6 +71,10 @@ export default function BoundaryMapPanel() {
                 </span>
               ))}
             </div>
+            <div className={'flex items-center gap-1.5 px-2.5 py-1.5 ' + GLASS}>
+              <span className="h-0.5 w-5 rounded-full bg-bone/90" aria-hidden="true" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-bone/70">Forest outline</span>
+            </div>
             <div className={'px-2.5 py-1.5 ' + GLASS}>
               <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-bone/70">{COPY.ndviGloss}</p>
               <div
@@ -84,7 +91,11 @@ export default function BoundaryMapPanel() {
         </div>
 
         <div className="border-t border-line bg-card px-4 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">
+          <p className="text-[12px] leading-relaxed text-ink-muted">
+            Forest outline: {SECTOR.outline.attribution}, {formatHa(SECTOR.outline.areaHa)} ha of mapped forest cover. It is the tree-cover
+            extent volunteers traced, not the gazetted reserve boundary.
+          </p>
+          <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">
             {plots.length} sample plots · select one to centre the map
           </p>
           <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Sample plots">

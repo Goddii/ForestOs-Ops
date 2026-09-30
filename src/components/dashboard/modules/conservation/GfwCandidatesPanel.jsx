@@ -13,22 +13,22 @@ const CONFIDENCE_TONE = { highest: 'critical', high: 'warn' }
  * alert queue: nothing here changes an alert or raises an incident.
  */
 export default function GfwCandidatesPanel() {
-  const [state, setState] = useState({ status: 'loading', alerts: [], from: null })
+  const [state, setState] = useState({ status: 'loading', alerts: [], total: 0, from: null })
   const [openKey, setOpenKey] = useState(null)
 
   useEffect(() => {
     const controller = new AbortController()
     fetchCandidates(controller.signal)
-      .then((body) => setState({ status: 'ready', alerts: body.alerts, from: body.from }))
+      .then((body) => setState({ status: 'ready', alerts: body.alerts, total: body.total ?? body.alerts.length, from: body.from }))
       .catch((error) => {
-        if (error.name !== 'AbortError') setState({ status: error.code ?? 'unavailable', alerts: [], from: null })
+        if (error.name !== 'AbortError') setState({ status: error.code ?? 'unavailable', alerts: [], total: 0, from: null })
       })
     return () => controller.abort()
   }, [])
 
   const lede =
     state.status === 'ready'
-      ? `${state.alerts.length} ${state.alerts.length === 1 ? 'cluster' : 'clusters'} since ${formatDay(state.from, true)} from Global Forest Watch integrated alerts (GLAD-L, GLAD-S2, RADD). Outside candidates: they do not change your alert queue.`
+      ? `${state.total > state.alerts.length ? `Newest ${state.alerts.length} of ${state.total} clusters` : `${state.total} ${state.total === 1 ? 'cluster' : 'clusters'}`} since ${formatDay(state.from, true)} inside the mapped forest or within 1 km of its edge, from Global Forest Watch integrated alerts (GLAD-L, GLAD-S2, RADD). Outside candidates: they do not change your alert queue.`
       : 'Deforestation alerts from Global Forest Watch across the sector, shown as candidates for review.'
 
   return (
@@ -57,6 +57,9 @@ export default function GfwCandidatesPanel() {
                   <div className="min-w-0 flex-1 basis-40">
                     <p className="font-mono text-[12px] text-ink">{formatCoord(a.lat)}, {formatCoord(a.lon)}</p>
                     <p className={CAPTION + ' mt-0.5'}>{formatDay(a.date, true)} · {formatHa(a.areaHa)} ha</p>
+                    <p className="mt-0.5 text-[12px] text-ink-muted">
+                      {a.inside ? `Inside the forest, ${a.edgeM} m from its edge` : `${a.edgeM} m outside the forest edge`}
+                    </p>
                   </div>
                   <StatusPill status={a.confidence} tone={CONFIDENCE_TONE[a.confidence] ?? 'neutral'} />
                   <button

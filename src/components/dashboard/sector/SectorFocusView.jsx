@@ -191,7 +191,7 @@ export default function SectorFocusView({ variant = 'eudr' }) {
         </div>
 
         <p className="border-t border-line px-4 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">
-          Prototype · schematic plot polygons on Esri World Imagery
+          Prototype · schematic plot polygons and NDVI on Esri World Imagery · forest outline {SECTOR.outline.attribution}
         </p>
       </div>
 

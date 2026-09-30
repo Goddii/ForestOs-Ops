@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react'
 import '../../../lib/cesiumBootstrap'
-import { Viewer, Entity, PolygonGraphics, useCesium } from 'resium'
+import { Viewer, Entity, PolygonGraphics, PolylineGraphics, useCesium } from 'resium'
 import {
   Cartesian2,
   Cartesian3,
   Color,
+  Credit,
   HeightReference,
   LabelStyle,
   Math as CesiumMath,
@@ -13,7 +14,7 @@ import {
   UrlTemplateImageryProvider,
   VerticalOrigin,
 } from 'cesium'
-import { COLLECTION_CENTRES, EUDR, NDVI_GRID, SECTOR } from '../../../lib/dashboardData'
+import { COLLECTION_CENTRES, EUDR, NDVI_GRID, SECTOR, SECTOR_OUTLINE } from '../../../lib/dashboardData'
 import { BONE, STATUS_COLOR, hierarchyOf, ndviColor } from './sectorMapStyle'
 
 const rad = (deg) => CesiumMath.toRadians(deg)
@@ -37,6 +38,7 @@ function ViewerSetup() {
         credit: 'Imagery © Esri, Maxar, Earthstar Geographics',
       }),
     )
+    viewer.creditDisplay.addStaticCredit(new Credit(`Forest outline ${SECTOR.outline.attribution}`, true))
 
     /* eslint-disable react/immutability -- Cesium scene is an external mutable system */
     const { scene } = viewer
@@ -112,6 +114,15 @@ function CameraRig({ reducedMotion, selectedPlot }) {
   return null
 }
 
+// Quantised to 0.05 steps so neighbouring cells share a material and Cesium can
+// batch the ~300 cells into a handful of draw calls.
+const NDVI_LEVEL = new Map()
+const ndviLevelColor = (ndvi) => {
+  const level = Math.round(ndvi * 20)
+  if (!NDVI_LEVEL.has(level)) NDVI_LEVEL.set(level, ndviColor(level / 20).withAlpha(0.46))
+  return NDVI_LEVEL.get(level)
+}
+
 function NdviLayer() {
   const cells = useMemo(
     () => NDVI_GRID.map((cell) => ({ ...cell, hierarchy: hierarchyOf(cell.ring) })),
@@ -119,9 +130,42 @@ function NdviLayer() {
   )
   return cells.map((cell) => (
     <Entity key={`ndvi:${cell.id}`}>
-      <PolygonGraphics hierarchy={cell.hierarchy} material={ndviColor(cell.ndvi).withAlpha(0.46)} height={0} />
+      <PolygonGraphics hierarchy={cell.hierarchy} material={ndviLevelColor(cell.ndvi)} height={0} />
     </Entity>
   ))
+}
+
+/** The real forest outline (holes included) and its name. Always on: it is the base geography. */
+function OutlineLayer() {
+  const lines = useMemo(
+    () => SECTOR_OUTLINE.rings.map((ring) => Cartesian3.fromDegreesArrayHeights(ring.flatMap(([lon, lat]) => [lon, lat, 25]))),
+    [],
+  )
+  const label = useMemo(() => SECTOR_OUTLINE.labelPoint(), [])
+  return (
+    <>
+      {lines.map((positions, i) => (
+        <Entity key={`outline:${i}`}>
+          <PolylineGraphics positions={positions} width={i === 0 ? 2.5 : 1.5} material={BONE.withAlpha(i === 0 ? 0.95 : 0.6)} />
+        </Entity>
+      ))}
+      <Entity
+        name={SECTOR.outline.name}
+        position={Cartesian3.fromDegrees(label.lon, label.lat, 0)}
+        label={{
+          text: SECTOR.outline.name.toUpperCase(),
+          font: "600 11px 'Archivo', sans-serif",
+          fillColor: BONE.withAlpha(0.92),
+          style: LabelStyle.FILL,
+          showBackground: true,
+          backgroundColor: Color.fromCssColorString('#0c1f16').withAlpha(0.55),
+          backgroundPadding: new Cartesian2(8, 5),
+          verticalOrigin: VerticalOrigin.CENTER,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        }}
+      />
+    </>
+  )
 }
 
 function AuditLayer({ selectedId, onPickPlot }) {
@@ -216,6 +260,7 @@ export default function SectorFocusMap({
     >
       <ViewerSetup />
       <CameraRig reducedMotion={reducedMotion} selectedPlot={selectedPlot} />
+      <OutlineLayer />
       {layers.ndvi && <NdviLayer />}
       {layers.audit && <AuditLayer selectedId={selectedPlotId} onPickPlot={onPickPlot} />}
       {layers.pins && <PinLayer onPickCentre={onPickCentre} />}
