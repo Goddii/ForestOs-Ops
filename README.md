@@ -64,3 +64,9 @@ accounts land on different, correctly-scoped screens.
 npm install
 npm run dev      # predev copies Cesium assets into public/cesium
 ```
+
+## Global Forest Watch alerts (optional)
+
+The Boundary & Encroachment screen lists deforestation alerts from Global Forest Watch. Register for a free key at
+data-api.globalforestwatch.org, then set `GFW_API_KEY` in `.env.local` (dev) or the host's environment (Vercel).
+The key is used only by `server/gfwAlerts.js`, served at `/api/gfw-alerts`; without it the panel says it is not connected.

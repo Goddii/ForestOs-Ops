@@ -23,6 +23,7 @@ import AgreementPill from './AgreementPill'
 import Callout from './Callout'
 import Confirmation from './Confirmation'
 import Marker from './Marker'
+import SatelliteEvidence from './SatelliteEvidence'
 import { useActionRunner } from './hooks'
 import { conPath } from './paths'
 import { assigneeTitle } from './taskRoles'
@@ -143,6 +144,8 @@ export default function AlertDetail({ detail }) {
       <Callout tone="info" className="mt-4">
         {COPY.agreement}
       </Callout>
+
+      {alert.lat !== null && alert.passDate && <SatelliteEvidence key={alert.alertId} alert={alert} />}
 
       {alert.dismissal && (
         <p className="mt-4 text-[13px] text-ink-muted">

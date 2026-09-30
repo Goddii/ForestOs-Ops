@@ -16,6 +16,7 @@ import { alertDetail, alertRows, boundaryKpis, headerSub, segmentRows } from '..
 import AgreementPill from './AgreementPill'
 import AlertDetail from './AlertDetail'
 import BoundaryMapPanel from './BoundaryMapPanel'
+import GfwCandidatesPanel from './GfwCandidatesPanel'
 import IntegrityBar from './IntegrityBar'
 import Marker from './Marker'
 import ScreenHeader from './ScreenHeader'
@@ -263,6 +264,8 @@ export default function ConservationBoundaryModule() {
           </div>
         </div>
       </div>
+
+      <GfwCandidatesPanel />
 
       <BoundaryMapPanel />
     </div>
